@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.labhub.client.controller.NewBookingDialogController"
+      style="-fx-padding:24; -fx-background-color:#F5F4EF;" spacing="14" prefWidth="440">
+
+    <Label text="New Booking" styleClass="section-title"/>
+
+    <Label fx:id="errorLabel" styleClass="error-label" managed="false" visible="false"/>
+
+    <VBox spacing="4">
+        <Label text="Laboratory *" styleClass="field-label"/>
+        <ComboBox fx:id="labCombo" maxWidth="Infinity" styleClass="combo-box"/>
+    </VBox>
+
+    <VBox spacing="4">
+        <Label text="Date *" styleClass="field-label"/>
+        <DatePicker fx:id="datePicker" maxWidth="Infinity"/>
+    </VBox>
+
+    <HBox spacing="12">
+        <VBox spacing="4" HBox.hgrow="ALWAYS">
+            <Label text="Start Time * (HH:mm)" styleClass="field-label"/>
+            <TextField fx:id="startTimeField" promptText="e.g. 09:00" styleClass="text-field"/>
+        </VBox>
+        <VBox spacing="4" HBox.hgrow="ALWAYS">
+            <Label text="End Time * (HH:mm)" styleClass="field-label"/>
+            <TextField fx:id="endTimeField" promptText="e.g. 11:00" styleClass="text-field"/>
+        </VBox>
+    </HBox>
+
+    <VBox spacing="4">
+        <Label text="Purpose *" styleClass="field-label"/>
+        <TextArea fx:id="purposeField" prefRowCount="3" wrapText="true" styleClass="text-area"/>
+    </VBox>
+
+    <VBox spacing="4">
+        <Label text="Attendees" styleClass="field-label"/>
+        <TextField fx:id="attendeesField" promptText="e.g. 25" styleClass="text-field"/>
+    </VBox>
+
+    <HBox fx:id="loadingBox" alignment="CENTER_LEFT" spacing="8" managed="false" visible="false">
+        <ProgressIndicator prefWidth="16" prefHeight="16"/>
+        <Label text="Submitting…" style="-fx-text-fill:#657078;"/>
+    </HBox>
+
+    <HBox alignment="CENTER_RIGHT" spacing="10">
+        <Button text="Cancel" styleClass="btn-secondary" onAction="#onCancel"/>
+        <Button fx:id="saveBtn" text="Submit Booking" styleClass="btn-primary" onAction="#onSave"/>
+    </HBox>
+</VBox>
