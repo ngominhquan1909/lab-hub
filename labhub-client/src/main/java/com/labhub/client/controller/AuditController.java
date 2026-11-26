@@ -60,14 +60,10 @@ public class AuditController implements Initializable {
         setLoading(true);
         Thread.ofVirtual().name("audit-load").start(() -> {
             try {
-                // Re-use AUDIT_LIST via dashboard endpoint
-                // The ApiClient doesn't expose a dedicated audit method yet;
-                // using a workaround via raw request would be needed in a full implementation.
-                // For now we simulate with an empty result until the endpoint is wired.
-                PagedResult<AuditLogDto> result = new PagedResult<>(
-                        java.util.List.of(), page, PAGE_SIZE, 0);
+                PagedResult<AuditLogDto> result =
+                        AppContext.get().getApiClient().getAuditLogs(page, PAGE_SIZE);
                 Platform.runLater(() -> { setLoading(false); applyResult(result, page); });
-            } catch (Exception ex) {
+            } catch (ApiException ex) {
                 LOG.error("Failed to load audit log: {}", ex.getMessage());
                 Platform.runLater(() -> {
                     setLoading(false);

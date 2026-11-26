@@ -196,6 +196,25 @@ public class ApiClient {
         return listFromPayload(r, CategoryDto.class);
     }
 
+    /**
+     * Returns a combined, newest-first history of borrow loans and maintenance
+     * tickets for a piece of equipment.
+     *
+     * @param equipmentId equipment ID
+     * @return list of history entries, each with fields: type, date, status,
+     *         personName, summary, and (depending on type) conditionAtCheckout,
+     *         conditionAtReturn, or resolutionNotes
+     * @throws ApiException on failure
+     */
+    public List<JsonNode> getEquipmentHistory(long equipmentId) throws ApiException {
+        Response r = send(RequestType.EQUIPMENT_HISTORY, MAPPER.createObjectNode().put("id", equipmentId));
+        List<JsonNode> entries = new java.util.ArrayList<>();
+        if (r.getPayload() != null && r.getPayload().isArray()) {
+            r.getPayload().forEach(entries::add);
+        }
+        return entries;
+    }
+
     // ── Bookings ──────────────────────────────────────────────────────────
 
     /**
@@ -358,6 +377,39 @@ public class ApiClient {
     }
 
     /**
+     * Records the physical checkout of an approved borrow request (hand-off to the borrower).
+     *
+     * @param requestId      borrow request ID (must be APPROVED)
+     * @param itemConditions equipment condition recorded at checkout, keyed by equipment ID
+     * @return updated borrow request DTO
+     * @throws ApiException on failure
+     */
+    public BorrowRequestDto checkoutBorrowRequest(long requestId,
+                                                   Map<Long, EquipmentCondition> itemConditions) throws ApiException {
+        com.fasterxml.jackson.databind.node.ObjectNode payload = MAPPER.createObjectNode()
+                .put("id", requestId);
+        if (itemConditions != null) {
+            com.fasterxml.jackson.databind.node.ObjectNode condNode =
+                    payload.putObject("itemConditions");
+            itemConditions.forEach((k, v) -> condNode.put(String.valueOf(k), v.name()));
+        }
+        Response r = send(RequestType.BORROW_CHECKOUT, payload);
+        return fromPayload(r, BorrowRequestDto.class);
+    }
+
+    /**
+     * Cancels a PENDING or APPROVED borrow request.
+     *
+     * @param requestId borrow request ID
+     * @return updated borrow request DTO
+     * @throws ApiException on failure
+     */
+    public BorrowRequestDto cancelBorrowRequest(long requestId) throws ApiException {
+        Response r = send(RequestType.BORROW_CANCEL, MAPPER.createObjectNode().put("id", requestId));
+        return fromPayload(r, BorrowRequestDto.class);
+    }
+
+    /**
      * Records equipment return.
      *
      * @param requestId      borrow request ID
@@ -407,6 +459,51 @@ public class ApiClient {
         return fromPayload(r, MaintenanceTicketDto.class);
     }
 
+    /**
+     * Assigns a maintenance ticket to a user.
+     *
+     * @param ticketId   ticket ID
+     * @param assigneeId user ID to assign the ticket to
+     * @return updated ticket DTO
+     * @throws ApiException on failure
+     */
+    public MaintenanceTicketDto assignMaintenanceTicket(long ticketId, long assigneeId) throws ApiException {
+        Response r = send(RequestType.MAINTENANCE_ASSIGN,
+                MAPPER.createObjectNode().put("id", ticketId).put("assigneeId", assigneeId));
+        return fromPayload(r, MaintenanceTicketDto.class);
+    }
+
+    /**
+     * Marks a maintenance ticket resolved.
+     *
+     * @param ticketId        ticket ID
+     * @param resolutionNotes description of the fix (required)
+     * @param repairCost      optional repair cost
+     * @return updated ticket DTO
+     * @throws ApiException on failure
+     */
+    public MaintenanceTicketDto resolveMaintenanceTicket(long ticketId, String resolutionNotes,
+                                                          java.math.BigDecimal repairCost) throws ApiException {
+        com.fasterxml.jackson.databind.node.ObjectNode p = MAPPER.createObjectNode()
+                .put("id", ticketId)
+                .put("resolutionNotes", resolutionNotes);
+        if (repairCost != null) {
+            p.put("repairCost", repairCost);
+        }
+        Response r = send(RequestType.MAINTENANCE_RESOLVE, p);
+        return fromPayload(r, MaintenanceTicketDto.class);
+    }
+
+    /**
+     * Closes a maintenance ticket; the equipment returns to AVAILABLE server-side.
+     *
+     * @param ticketId ticket ID
+     * @throws ApiException on failure
+     */
+    public void closeMaintenanceTicket(long ticketId) throws ApiException {
+        send(RequestType.MAINTENANCE_CLOSE, MAPPER.createObjectNode().put("id", ticketId));
+    }
+
     // ── Users ─────────────────────────────────────────────────────────────
 
     /**
@@ -427,6 +524,52 @@ public class ApiClient {
         }
         Response r = send(RequestType.USER_LIST, payload);
         return pagedResult(r, UserDto.class);
+    }
+
+    /**
+     * Creates a new user account (admin only).
+     *
+     * @param username username
+     * @param email    email address
+     * @param fullName full display name
+     * @param password initial plaintext password (hashed server-side)
+     * @param phone    optional phone number
+     * @param roles    roles to assign (defaults to STUDENT if empty)
+     * @return created user DTO
+     * @throws ApiException on failure
+     */
+    public UserDto createUser(String username, String email, String fullName, String password,
+                               String phone, List<com.labhub.common.enums.UserRole> roles) throws ApiException {
+        com.fasterxml.jackson.databind.node.ObjectNode payload = MAPPER.createObjectNode()
+                .put("username", username)
+                .put("email", email)
+                .put("fullName", fullName)
+                .put("password", password);
+        if (phone != null && !phone.isBlank()) {
+            payload.put("phoneNumber", phone);
+        }
+        com.fasterxml.jackson.databind.node.ArrayNode roleArray = payload.putArray("roles");
+        if (roles != null) {
+            roles.forEach(r -> roleArray.add(r.name()));
+        }
+        Response r = send(RequestType.USER_CREATE, payload);
+        return fromPayload(r, UserDto.class);
+    }
+
+    // ── Audit ─────────────────────────────────────────────────────────────
+
+    /**
+     * Returns paginated audit log entries, newest first (admin/lab-manager only).
+     *
+     * @param page     page
+     * @param pageSize page size
+     * @return paged audit entries
+     * @throws ApiException on failure
+     */
+    public PagedResult<AuditLogDto> getAuditLogs(int page, int pageSize) throws ApiException {
+        Response r = send(RequestType.AUDIT_LIST,
+                MAPPER.createObjectNode().put("page", page).put("pageSize", pageSize));
+        return pagedResult(r, AuditLogDto.class);
     }
 
     // ── Internal ──────────────────────────────────────────────────────────
