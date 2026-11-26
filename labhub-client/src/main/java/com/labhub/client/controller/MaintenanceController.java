@@ -64,8 +64,12 @@ public class MaintenanceController implements Initializable {
 
     @FXML
     private void onNewTicket() {
-        UiUtils.showInfo("File Maintenance Ticket",
-                "Maintenance ticket form opens here.\nSelect equipment and describe the issue.");
+        Object controller = com.labhub.client.app.ViewManager.get()
+                .showDialog("NewMaintenanceTicketDialog.fxml", "File Maintenance Ticket");
+        if (controller instanceof NewMaintenanceTicketDialogController dialog
+                && dialog.getCreatedTicket() != null) {
+            loadPage(1);
+        }
     }
 
     @FXML private void onRowClicked(MouseEvent e) {
@@ -117,15 +121,13 @@ public class MaintenanceController implements Initializable {
     }
 
     private void showDetail(MaintenanceTicketDto t) {
-        UiUtils.showInfo("Maintenance Ticket #" + t.getId(),
-                "Equipment:  " + t.getEquipmentName() + " (" + t.getAssetCode() + ")"
-                + "\nReporter:   " + t.getReporterName()
-                + "\nPriority:   " + (t.getPriority() != null ? t.getPriority().name() : "—")
-                + "\nStatus:     " + (t.getStatus() != null ? t.getStatus().name() : "—")
-                + "\nAssignee:   " + (t.getAssigneeName() != null ? t.getAssigneeName() : "Unassigned")
-                + "\nOpened:     " + (t.getOpenedAt() != null ? t.getOpenedAt().format(DT_FMT) : "—")
-                + "\nDescription:\n" + t.getDescription()
-                + (t.getResolutionNotes() != null ? "\nResolution:\n" + t.getResolutionNotes() : ""));
+        Object controller = com.labhub.client.app.ViewManager.get()
+                .showDialog("MaintenanceTicketDetailDialog.fxml", "Maintenance Ticket #" + t.getId(),
+                        c -> ((MaintenanceTicketDetailDialogController) c).setTicket(t));
+        if (controller instanceof MaintenanceTicketDetailDialogController dialog
+                && dialog.wasChanged()) {
+            loadPage(currentPage);
+        }
     }
 
     private void setupFilters() {

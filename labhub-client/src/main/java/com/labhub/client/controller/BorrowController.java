@@ -67,8 +67,12 @@ public class BorrowController implements Initializable {
 
     @FXML
     private void onNewRequest() {
-        UiUtils.showInfo("New Borrow Request",
-                "Borrow request form opens here.\nSelect equipment and set a return date.");
+        Object controller = com.labhub.client.app.ViewManager.get()
+                .showDialog("NewBorrowDialog.fxml", "New Borrow Request");
+        if (controller instanceof NewBorrowDialogController dialog
+                && dialog.getCreatedRequest() != null) {
+            loadPage(1);
+        }
     }
 
     @FXML private void onRowClicked(MouseEvent e) {
@@ -124,32 +128,45 @@ public class BorrowController implements Initializable {
                 c.getValue().getStatus() != null ? c.getValue().getStatus().name() : "—"));
 
         colActions.setCellFactory(col -> new TableCell<>() {
-            private final Button approveBtn = new Button("Approve");
-            private final Button rejectBtn  = new Button("Reject");
-            private final HBox   box        = new HBox(4, approveBtn, rejectBtn);
+            private final Button approveBtn  = smallButton("Approve",  "btn-success");
+            private final Button rejectBtn   = smallButton("Reject",   "btn-danger");
+            private final Button checkoutBtn = smallButton("Check Out","btn-primary");
+            private final Button returnBtn   = smallButton("Return",   "btn-success");
+            private final Button cancelBtn   = smallButton("Cancel",   "btn-secondary");
+            private final HBox   box = new HBox(4, approveBtn, rejectBtn, checkoutBtn, returnBtn, cancelBtn);
             {
-                approveBtn.getStyleClass().add("btn-success");
-                approveBtn.setStyle("-fx-font-size:11px; -fx-padding:4 8;");
-                rejectBtn.getStyleClass().add("btn-danger");
-                rejectBtn.setStyle("-fx-font-size:11px; -fx-padding:4 8;");
-                approveBtn.setOnAction(e -> {
-                    BorrowRequestDto req = getTableView().getItems().get(getIndex());
-                    handleApprove(req);
-                });
-                rejectBtn.setOnAction(e -> {
-                    BorrowRequestDto req = getTableView().getItems().get(getIndex());
-                    handleReject(req);
-                });
+                approveBtn.setOnAction(e -> handleApprove(rowItem()));
+                rejectBtn.setOnAction(e -> handleReject(rowItem()));
+                checkoutBtn.setOnAction(e -> handleCheckout(rowItem()));
+                returnBtn.setOnAction(e -> handleReturn(rowItem()));
+                cancelBtn.setOnAction(e -> handleCancel(rowItem()));
             }
+
+            private BorrowRequestDto rowItem() {
+                return getTableView().getItems().get(getIndex());
+            }
+
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty) { setGraphic(null); return; }
-                BorrowRequestDto req = getTableView().getItems().get(getIndex());
-                boolean show = isManager && req.getStatus() == BorrowStatus.PENDING;
-                approveBtn.setVisible(show); approveBtn.setManaged(show);
-                rejectBtn.setVisible(show);  rejectBtn.setManaged(show);
+                BorrowRequestDto req = rowItem();
+                BorrowStatus status = req.getStatus();
+                boolean isOwner = req.getRequesterId() != null
+                        && req.getRequesterId().equals(AppContext.get().getCurrentUser().getId());
+
+                show(approveBtn,  isManager && status == BorrowStatus.PENDING);
+                show(rejectBtn,   isManager && status == BorrowStatus.PENDING);
+                show(checkoutBtn, isManager && status == BorrowStatus.APPROVED);
+                show(returnBtn,   isManager && (status == BorrowStatus.ACTIVE || status == BorrowStatus.OVERDUE));
+                show(cancelBtn,   (isManager || isOwner)
+                        && (status == BorrowStatus.PENDING || status == BorrowStatus.APPROVED));
                 setGraphic(box);
+            }
+
+            private void show(Button b, boolean visible) {
+                b.setVisible(visible);
+                b.setManaged(visible);
             }
         });
     }
@@ -183,13 +200,69 @@ public class BorrowController implements Initializable {
     }
 
     private void showDetail(BorrowRequestDto r) {
+        StringBuilder items = new StringBuilder();
+        if (r.getItems() != null) {
+            for (BorrowRequestDto.BorrowItemDto item : r.getItems()) {
+                items.append("\n   • ").append(item.getEquipmentName())
+                        .append(" (").append(item.getAssetCode()).append(")");
+                if (item.getConditionAtCheckout() != null) {
+                    items.append("  [checkout: ").append(item.getConditionAtCheckout()).append("]");
+                }
+                if (item.getConditionAtReturn() != null) {
+                    items.append("  [return: ").append(item.getConditionAtReturn()).append("]");
+                }
+            }
+        }
         UiUtils.showInfo("Borrow Request #" + r.getId(),
                 "Requester:   " + r.getRequesterName()
                 + "\nPurpose:     " + r.getPurpose()
                 + "\nDue:         " + (r.getExpectedReturnAt() != null
                         ? r.getExpectedReturnAt().format(DT_FMT) : "—")
                 + "\nStatus:      " + (r.getStatus() != null ? r.getStatus().name() : "—")
-                + "\nItems:       " + (r.getItems() != null ? r.getItems().size() : 0));
+                + "\nItems:" + (items.length() > 0 ? items : "  (none)"));
+    }
+
+    private void handleCheckout(BorrowRequestDto req) {
+        Object controller = com.labhub.client.app.ViewManager.get().showDialog(
+                "ItemConditionDialog.fxml", "Check Out Equipment",
+                c -> ((ItemConditionDialogController) c)
+                        .setup(ItemConditionDialogController.Mode.CHECKOUT, req));
+        if (controller instanceof ItemConditionDialogController dialog
+                && dialog.getUpdatedRequest() != null) {
+            loadPage(currentPage);
+        }
+    }
+
+    private void handleReturn(BorrowRequestDto req) {
+        Object controller = com.labhub.client.app.ViewManager.get().showDialog(
+                "ItemConditionDialog.fxml", "Return Equipment",
+                c -> ((ItemConditionDialogController) c)
+                        .setup(ItemConditionDialogController.Mode.RETURN, req));
+        if (controller instanceof ItemConditionDialogController dialog
+                && dialog.getUpdatedRequest() != null) {
+            loadPage(currentPage);
+        }
+    }
+
+    private void handleCancel(BorrowRequestDto req) {
+        boolean ok = UiUtils.showConfirm("Cancel Borrow Request",
+                "Cancel borrow request #" + req.getId() + "?");
+        if (!ok) return;
+        Thread.ofVirtual().name("borrow-cancel").start(() -> {
+            try {
+                AppContext.get().getApiClient().cancelBorrowRequest(req.getId());
+                Platform.runLater(() -> loadPage(currentPage));
+            } catch (ApiException ex) {
+                Platform.runLater(() -> UiUtils.showError("Error", ex.getMessage()));
+            }
+        });
+    }
+
+    private Button smallButton(String text, String styleClass) {
+        Button b = new Button(text);
+        b.getStyleClass().add(styleClass);
+        b.setStyle("-fx-font-size:11px; -fx-padding:4 8;");
+        return b;
     }
 
     private void setupFilters() {

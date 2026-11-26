@@ -107,16 +107,40 @@ public final class ViewManager {
      * @return the loaded controller
      */
     public Object showDialog(String fxmlName, String title) {
+        return showDialog(fxmlName, title, null);
+    }
+
+    /**
+     * Opens a modal dialog with the given FXML, allowing the caller to configure the
+     * controller (e.g. pass in data to display/edit) before the dialog is shown.
+     *
+     * @param fxmlName   dialog FXML filename
+     * @param title      dialog title
+     * @param beforeShow optional callback invoked with the loaded controller before
+     *                   {@code showAndWait()}; may be null
+     * @return the loaded controller
+     */
+    public Object showDialog(String fxmlName, String title,
+                              java.util.function.Consumer<Object> beforeShow) {
         try {
             FXMLLoader loader = createLoader(fxmlName);
             Parent root = loader.load();
             Stage dialog = new Stage();
             dialog.setTitle(title);
-            dialog.setScene(new Scene(root));
+            Scene scene = new Scene(root);
+            URL css = getClass().getResource("/com/labhub/client/css/labhub.css");
+            if (css != null) {
+                scene.getStylesheets().add(css.toExternalForm());
+            }
+            dialog.setScene(scene);
             dialog.initOwner(primaryStage);
             dialog.initModality(javafx.stage.Modality.WINDOW_MODAL);
+            Object controller = loader.getController();
+            if (beforeShow != null) {
+                beforeShow.accept(controller);
+            }
             dialog.showAndWait();
-            return loader.getController();
+            return controller;
         } catch (IOException e) {
             LOG.error("Failed to open dialog '{}': {}", fxmlName, e.getMessage(), e);
             return null;

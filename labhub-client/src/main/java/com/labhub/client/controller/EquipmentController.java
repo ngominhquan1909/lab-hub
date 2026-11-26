@@ -57,6 +57,7 @@ public class EquipmentController implements Initializable {
     private int currentPage = 1;
     private int totalPages  = 1;
     private Long selectedLabId = null;
+    private final java.util.Map<String, Long> labIdsByName = new java.util.LinkedHashMap<>();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -82,9 +83,12 @@ public class EquipmentController implements Initializable {
 
     @FXML
     private void onAdd() {
-        UiUtils.showInfo("Add Equipment",
-                "Equipment creation dialog is shown here.\n"
-                + "Connect to AddEquipmentDialog.fxml in a full implementation.");
+        Object controller = com.labhub.client.app.ViewManager.get()
+                .showDialog("AddEquipmentDialog.fxml", "Add Equipment");
+        if (controller instanceof AddEquipmentDialogController dialog
+                && dialog.getCreatedEquipment() != null) {
+            loadPage(1);
+        }
     }
 
     @FXML
@@ -193,10 +197,8 @@ public class EquipmentController implements Initializable {
         labFilter.setValue("All Labs");
         labFilter.setOnAction(e -> {
             String selected = labFilter.getValue();
-            if (selected == null || selected.equals("All Labs")) {
-                selectedLabId = null;
-            }
-            // Real implementation would map lab name → id here
+            selectedLabId = (selected == null || selected.equals("All Labs"))
+                    ? null : labIdsByName.get(selected);
             onSearch();
         });
 
@@ -206,6 +208,7 @@ public class EquipmentController implements Initializable {
                 Platform.runLater(() -> {
                     if (labs.getItems() != null) {
                         for (LabDto lab : labs.getItems()) {
+                            labIdsByName.put(lab.getName(), lab.getId());
                             labFilter.getItems().add(lab.getName());
                         }
                     }
@@ -215,17 +218,9 @@ public class EquipmentController implements Initializable {
     }
 
     private void showEquipmentDetail(EquipmentDto equipment) {
-        UiUtils.showInfo("Equipment Detail",
-                "Asset Code:  " + equipment.getAssetCode()
-                + "\nName:        " + equipment.getName()
-                + "\nCategory:    " + equipment.getCategoryName()
-                + "\nLab:         " + (equipment.getLabName() != null ? equipment.getLabName() : "Unassigned")
-                + "\nManufacturer:" + (equipment.getManufacturer() != null ? equipment.getManufacturer() : "—")
-                + "\nModel:       " + (equipment.getModel() != null ? equipment.getModel() : "—")
-                + "\nSerial No:   " + (equipment.getSerialNumber() != null ? equipment.getSerialNumber() : "—")
-                + "\nCondition:   " + (equipment.getCondition() != null ? equipment.getCondition().name() : "—")
-                + "\nStatus:      " + (equipment.getStatus() != null ? equipment.getStatus().name() : "—")
-                + "\nNotes:       " + (equipment.getNotes() != null ? equipment.getNotes() : "—"));
+        com.labhub.client.app.ViewManager.get().showDialog(
+                "EquipmentDetailDialog.fxml", "Equipment Detail",
+                c -> ((EquipmentDetailDialogController) c).setEquipment(equipment));
     }
 
     private void setLoading(boolean loading) {

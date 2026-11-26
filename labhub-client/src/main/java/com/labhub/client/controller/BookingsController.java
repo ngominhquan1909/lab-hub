@@ -76,9 +76,12 @@ public class BookingsController implements Initializable {
 
     @FXML
     private void onNewBooking() {
-        UiUtils.showInfo("New Booking",
-                "Booking creation dialog opens here.\n"
-                + "Implement NewBookingDialog.fxml for the full flow.");
+        Object controller = com.labhub.client.app.ViewManager.get()
+                .showDialog("NewBookingDialog.fxml", "New Booking");
+        if (controller instanceof NewBookingDialogController dialog
+                && dialog.getCreatedBooking() != null) {
+            loadPage(1);
+        }
     }
 
     @FXML
@@ -167,16 +170,21 @@ public class BookingsController implements Initializable {
         colActions.setCellFactory(col -> new TableCell<>() {
             private final Button approveBtn = new Button("Approve");
             private final Button rejectBtn  = new Button("Reject");
-            private final HBox   box        = new HBox(4, approveBtn, rejectBtn);
+            private final Button cancelBtn  = new Button("Cancel");
+            private final HBox   box        = new HBox(4, approveBtn, rejectBtn, cancelBtn);
 
             {
                 approveBtn.getStyleClass().add("btn-success");
                 approveBtn.setStyle("-fx-font-size:11px; -fx-padding:4 8;");
                 rejectBtn.getStyleClass().add("btn-danger");
                 rejectBtn.setStyle("-fx-font-size:11px; -fx-padding:4 8;");
+                cancelBtn.getStyleClass().add("btn-secondary");
+                cancelBtn.setStyle("-fx-font-size:11px; -fx-padding:4 8;");
                 approveBtn.setOnAction(e -> handleApprove(getItem() != null
                         ? getTableView().getItems().get(getIndex()) : null));
                 rejectBtn.setOnAction(e -> handleReject(getItem() != null
+                        ? getTableView().getItems().get(getIndex()) : null));
+                cancelBtn.setOnAction(e -> handleCancel(getItem() != null
                         ? getTableView().getItems().get(getIndex()) : null));
             }
 
@@ -189,12 +197,35 @@ public class BookingsController implements Initializable {
                 }
                 BookingDto booking = getTableView().getItems().get(getIndex());
                 boolean isPending = booking.getStatus() == BookingStatus.PENDING;
-                boolean showActions = isManager && isPending;
-                approveBtn.setVisible(showActions);
-                approveBtn.setManaged(showActions);
-                rejectBtn.setVisible(showActions);
-                rejectBtn.setManaged(showActions);
+                boolean isApproved = booking.getStatus() == BookingStatus.APPROVED;
+                boolean isOwner = booking.getRequesterId() != null
+                        && booking.getRequesterId().equals(AppContext.get().getCurrentUser().getId());
+                boolean showApproveReject = isManager && isPending;
+                boolean showCancel = (isManager || isOwner) && (isPending || isApproved);
+                approveBtn.setVisible(showApproveReject);
+                approveBtn.setManaged(showApproveReject);
+                rejectBtn.setVisible(showApproveReject);
+                rejectBtn.setManaged(showApproveReject);
+                cancelBtn.setVisible(showCancel);
+                cancelBtn.setManaged(showCancel);
                 setGraphic(box);
+            }
+        });
+    }
+
+    private void handleCancel(BookingDto booking) {
+        if (booking == null) return;
+        boolean confirmed = UiUtils.showConfirm("Cancel Booking",
+                "Cancel the booking for " + booking.getLabName() + "?");
+        if (!confirmed) return;
+
+        setLoading(true);
+        Thread.ofVirtual().name("booking-cancel").start(() -> {
+            try {
+                AppContext.get().getApiClient().cancelBooking(booking.getId());
+                Platform.runLater(() -> { setLoading(false); loadPage(currentPage); });
+            } catch (ApiException e) {
+                Platform.runLater(() -> { setLoading(false); UiUtils.showError("Error", e.getMessage()); });
             }
         });
     }

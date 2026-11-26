@@ -58,9 +58,12 @@ public class UsersController implements Initializable {
 
     @FXML
     private void onCreateUser() {
-        UiUtils.showInfo("Create User Account",
-                "User creation dialog opens here.\n"
-                + "Fill in username, email, full name, and assign roles.");
+        Object controller = com.labhub.client.app.ViewManager.get()
+                .showDialog("CreateUserDialog.fxml", "Create User Account");
+        if (controller instanceof CreateUserDialogController dialog
+                && dialog.getCreatedUser() != null) {
+            loadPage(1);
+        }
     }
 
     @FXML private void onPrevPage() { if (currentPage > 1) loadPage(currentPage - 1); }

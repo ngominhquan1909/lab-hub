@@ -63,7 +63,11 @@ public class LabsController implements Initializable {
 
     @FXML
     private void onAddLab() {
-        UiUtils.showInfo("Add Laboratory", "Lab creation dialog opens here.");
+        Object controller = com.labhub.client.app.ViewManager.get()
+                .showDialog("AddLabDialog.fxml", "Add Laboratory");
+        if (controller instanceof AddLabDialogController dialog && dialog.getCreatedLab() != null) {
+            loadPage(1);
+        }
     }
 
     @FXML private void onRowClicked(MouseEvent e) {
