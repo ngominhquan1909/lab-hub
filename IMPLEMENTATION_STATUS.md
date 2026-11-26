@@ -92,23 +92,44 @@
 ## Tasks In Progress / Remaining
 
 ### High Priority — Required to build and run
-- [ ] Verify `mvn clean package` succeeds (compile errors may exist in generated code)
+- [ ] Verify `mvn clean package` succeeds — **not yet run in this environment** (no
+      network access to Maven Central here); all changes below were verified by manual
+      signature tracing (handler → service → repository → DTO → ApiClient → controller)
+      and brace/paren/fx:id/onAction cross-checks instead. Run the real build before shipping.
 - [ ] Fix any FXML controller binding issues found during first run
-- [ ] Wire `AuditController` to real `AUDIT_LIST` endpoint via `ApiClient`
+- [x] Wire `AuditController` to real `AUDIT_LIST` endpoint via `ApiClient` — done
+      (`ApiClient.getAuditLogs()` + `AuditController` now calls it instead of faking an
+      empty result)
 
 ### Medium Priority — Feature completeness
-- [ ] `NewBookingDialog.fxml` + controller (booking creation form with date/time pickers)
-- [ ] `NewBorrowDialog.fxml` + controller (equipment selection + return date)
-- [ ] `AddEquipmentDialog.fxml` + controller
-- [ ] `AddLabDialog.fxml` + controller
-- [ ] `CreateUserDialog.fxml` + controller
-- [ ] Booking schedule / calendar view
-- [ ] Equipment detail / history view
-- [ ] Maintenance ticket detail + action buttons (assign, resolve, close)
-- [ ] Return equipment dialog (with per-item condition recording)
+- [x] `NewBookingDialog.fxml` + controller — done, wired to `BookingsController.onNewBooking()`
+- [x] `NewBorrowDialog.fxml` + controller — done (multi-select of AVAILABLE equipment),
+      wired to `BorrowController.onNewRequest()`
+- [x] `AddEquipmentDialog.fxml` + controller — done, wired to `EquipmentController.onAdd()`
+- [x] `AddLabDialog.fxml` + controller — done, wired to `LabsController.onAddLab()`
+- [x] `CreateUserDialog.fxml` + controller — done (role checkboxes), wired to
+      `UsersController.onCreateUser()`; added `ApiClient.createUser()`
+- [ ] Booking schedule / calendar view — server (`BOOKING_SCHEDULE` / `findSchedule`) was
+      already complete; client-side calendar UI still not built
+- [x] Equipment detail / history view — done: new `EQUIPMENT_HISTORY` server handler
+      (was defined in `RequestType` but never implemented or registered — added a combined
+      borrow + maintenance history query in `EquipmentHandler`, registered it in
+      `LabHubServerApplication`), `ApiClient.getEquipmentHistory()`, and
+      `EquipmentDetailDialog` replacing the old plain-text popup. Also fixed a pre-existing
+      bug where the Equipment lab filter never mapped lab name → lab ID.
+- [x] Maintenance ticket detail + action buttons (assign, resolve, close) — done via
+      `MaintenanceTicketDetailDialog` (manager-only assign/resolve/close actions) and
+      `NewMaintenanceTicketDialog` (file a new ticket); added
+      `ApiClient.assignMaintenanceTicket()/resolveMaintenanceTicket()/closeMaintenanceTicket()`
+- [x] Return equipment dialog (with per-item condition recording) — done via the shared
+      `ItemConditionDialog` (used for both checkout and return); added
+      `ApiClient.checkoutBorrowRequest()/cancelBorrowRequest()`. Also added working
+      Checkout/Return/Cancel row actions to `BorrowController` and a working Cancel action
+      to `BookingsController` (the latter had a comment saying "cancel for owners" but no
+      button was ever wired).
 
 ### Low Priority — Polish
-- [ ] Pagination for the AuditController (needs an `auditList` method in `ApiClient`)
+- [x] Pagination for the AuditController — done, see above
 - [ ] Keyboard shortcuts for common actions
 - [ ] Export to CSV for equipment and booking lists
 - [ ] Session expiry notification in the client
@@ -121,9 +142,10 @@
 | # | Description | Severity | Workaround |
 |---|---|---|---|
 | 1 | `BookingServiceTest` uses inner fake classes that call `super(null)` — may cause NPE if any base repository method is called without being overridden | Medium | All relevant methods are overridden in fakes |
-| 2 | `AuditController` returns empty results (endpoint not wired in `ApiClient`) | Low | Audit data visible in DB; full wiring is straightforward |
-| 3 | `BorrowHandler.handleCancel()` returns `NOT_IMPLEMENTED` | Low | Cancellation can be performed by manager via status update |
+| 2 | ~~`AuditController` returns empty results~~ — **Fixed**: now wired to `ApiClient.getAuditLogs()` | — | — |
+| 3 | ~~`BorrowHandler.handleCancel()` returns `NOT_IMPLEMENTED`~~ — **Fixed**: added `BorrowRepository.cancel()` / `BorrowService.cancel()`, handles PENDING and APPROVED requests, releases reserved equipment back to AVAILABLE | — | — |
 | 4 | `JavaFX 25.0.2` not yet on Maven Central; using `21.0.4 LTS` | Note | API-compatible; update version when 25.x is published |
+| 5 | No `mvn clean package` run against these changes — this sandbox cannot reach Maven Central/the dependency repos | Medium | Run the build locally before relying on this status doc; this session's checks were manual (signature tracing + structural cross-checks), not a compiler |
 
 ---
 
