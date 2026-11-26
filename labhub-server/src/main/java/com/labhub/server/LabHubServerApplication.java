@@ -130,6 +130,7 @@ public class LabHubServerApplication {
         dispatcher.register(RequestType.EQUIPMENT_DEACTIVATE, equipmentHandler);
         dispatcher.register(RequestType.CATEGORY_LIST,        equipmentHandler);
         dispatcher.register(RequestType.CATEGORY_CREATE,      equipmentHandler);
+        dispatcher.register(RequestType.EQUIPMENT_HISTORY,    equipmentHandler);
 
         // Bookings
         dispatcher.register(RequestType.BOOKING_LIST,     bookingHandler);

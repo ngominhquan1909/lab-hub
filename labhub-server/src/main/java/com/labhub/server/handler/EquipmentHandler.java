@@ -57,6 +57,7 @@ public class EquipmentHandler extends BaseHandler {
             case EQUIPMENT_DEACTIVATE -> handleDeactivate(request, currentUser);
             case CATEGORY_LIST        -> handleCategoryList(request);
             case CATEGORY_CREATE      -> handleCategoryCreate(request, currentUser);
+            case EQUIPMENT_HISTORY    -> handleHistory(request);
             default -> Response.error(request.getRequestId(), "INVALID_REQUEST",
                     "EquipmentHandler does not handle " + request.getType());
         };
@@ -168,6 +169,94 @@ public class EquipmentHandler extends BaseHandler {
             LOG.error("Failed to deactivate equipment {}: {}", id, e.getMessage(), e);
             return Response.error(request.getRequestId(), "DATABASE_ERROR", "Failed to deactivate.");
         }
+    }
+
+    /**
+     * Returns a combined, newest-first history for a piece of equipment: borrow
+     * loans (with borrower and condition at checkout/return) and maintenance
+     * tickets (with reporter, priority, and resolution).
+     *
+     * @param request request carrying the equipment {@code id}
+     * @return a JSON array of history entries, or an error response
+     */
+    private Response handleHistory(Request request) {
+        long equipmentId = longOrDefault(request.getPayload(), "id", 0);
+        if (equipmentId <= 0) {
+            return Response.error(request.getRequestId(), "VALIDATION_ERROR", "Equipment ID required.");
+        }
+        if (equipmentRepository.findById(equipmentId).isEmpty()) {
+            return Response.error(request.getRequestId(), "NOT_FOUND", "Equipment not found.");
+        }
+
+        List<com.fasterxml.jackson.databind.node.ObjectNode> entries = new ArrayList<>();
+        String borrowSql =
+                "SELECT br.id, br.status, br.purpose, br.created_at, br.checked_out_at, "
+                + "br.actual_return_at, u.full_name AS requester_name, "
+                + "bi.condition_at_checkout, bi.condition_at_return "
+                + "FROM borrow_items bi "
+                + "JOIN borrow_requests br ON bi.borrow_request_id = br.id "
+                + "JOIN users u ON br.requester_id = u.id "
+                + "WHERE bi.equipment_id = ? ORDER BY br.created_at DESC";
+        String maintSql =
+                "SELECT mt.id, mt.status, mt.priority, mt.description, mt.opened_at, "
+                + "mt.resolved_at, mt.resolution_notes, ru.full_name AS reporter_name "
+                + "FROM maintenance_tickets mt "
+                + "JOIN users ru ON mt.reporter_id = ru.id "
+                + "WHERE mt.equipment_id = ? ORDER BY mt.opened_at DESC";
+
+        try (Connection conn = db.getConnection()) {
+            try (PreparedStatement ps = conn.prepareStatement(borrowSql)) {
+                ps.setLong(1, equipmentId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        com.fasterxml.jackson.databind.node.ObjectNode e = MAPPER.createObjectNode();
+                        e.put("type", "BORROW");
+                        e.put("date", timestampToText(rs.getTimestamp("created_at")));
+                        e.put("status", rs.getString("status"));
+                        e.put("personName", rs.getString("requester_name"));
+                        e.put("summary", "Borrowed for: " + rs.getString("purpose"));
+                        String checkoutCond = rs.getString("condition_at_checkout");
+                        String returnCond   = rs.getString("condition_at_return");
+                        if (checkoutCond != null) {
+                            e.put("conditionAtCheckout", checkoutCond);
+                        }
+                        if (returnCond != null) {
+                            e.put("conditionAtReturn", returnCond);
+                        }
+                        entries.add(e);
+                    }
+                }
+            }
+            try (PreparedStatement ps = conn.prepareStatement(maintSql)) {
+                ps.setLong(1, equipmentId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        com.fasterxml.jackson.databind.node.ObjectNode e = MAPPER.createObjectNode();
+                        e.put("type", "MAINTENANCE");
+                        e.put("date", timestampToText(rs.getTimestamp("opened_at")));
+                        e.put("status", rs.getString("status"));
+                        e.put("personName", rs.getString("reporter_name"));
+                        e.put("summary", "[" + rs.getString("priority") + "] " + rs.getString("description"));
+                        String resolution = rs.getString("resolution_notes");
+                        if (resolution != null) {
+                            e.put("resolutionNotes", resolution);
+                        }
+                        entries.add(e);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            LOG.error("Failed to load equipment history for {}: {}", equipmentId, e.getMessage(), e);
+            return Response.error(request.getRequestId(), "DATABASE_ERROR", "Failed to load history.");
+        }
+
+        // Combine and sort newest-first by date text (ISO-ish, sorts correctly as string)
+        entries.sort((a, b) -> b.get("date").asText().compareTo(a.get("date").asText()));
+        return Response.ok(request.getRequestId(), "Equipment history loaded.", MAPPER.valueToTree(entries));
+    }
+
+    private String timestampToText(java.sql.Timestamp ts) {
+        return ts != null ? ts.toLocalDateTime().toString() : "";
     }
 
     private Response handleCategoryList(Request request) {

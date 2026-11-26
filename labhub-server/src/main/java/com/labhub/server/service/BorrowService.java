@@ -296,4 +296,44 @@ public class BorrowService {
             return ServiceResult.failure("Failed to record equipment return.");
         }
     }
+
+    /**
+     * Cancels a borrow request before checkout. The requester may cancel their own;
+     * managers can cancel any. Equipment reserved by an APPROVED request is released
+     * back to AVAILABLE.
+     *
+     * @param requestId   borrow request ID
+     * @param currentUser user performing the cancellation
+     * @return service result
+     */
+    public ServiceResult<BorrowRequestDto> cancel(long requestId, UserDto currentUser) {
+        Optional<BorrowRequestDto> maybe = borrowRepository.findById(requestId);
+        if (maybe.isEmpty()) {
+            return ServiceResult.failure("Borrow request not found.");
+        }
+        BorrowRequestDto req = maybe.get();
+        boolean isOwner = req.getRequesterId().equals(currentUser.getId());
+        boolean isManager = currentUser.hasRole(UserRole.ADMIN)
+                || currentUser.hasRole(UserRole.LAB_MANAGER);
+        if (!isOwner && !isManager) {
+            return ServiceResult.failure("You do not have permission to cancel this request.");
+        }
+        if (req.getStatus() != BorrowStatus.PENDING && req.getStatus() != BorrowStatus.APPROVED) {
+            return ServiceResult.failure("This request cannot be cancelled in its current state.");
+        }
+        try {
+            borrowRepository.cancel(requestId, currentUser.getId());
+            if (req.getStatus() == BorrowStatus.APPROVED && req.getItems() != null) {
+                for (BorrowRequestDto.BorrowItemDto item : req.getItems()) {
+                    equipmentRepository.setStatus(item.getEquipmentId(), EquipmentStatus.AVAILABLE);
+                }
+            }
+            dashboardRepository.log(currentUser.getId(), "BORROW_CANCELLED",
+                    "BORROW_REQUEST", requestId, "Cancelled by " + currentUser.getUsername());
+            return ServiceResult.success(borrowRepository.findById(requestId).orElseThrow());
+        } catch (SQLException e) {
+            LOG.error("Failed to cancel borrow request {}: {}", requestId, e.getMessage(), e);
+            return ServiceResult.failure("Failed to cancel request.");
+        }
+    }
 }

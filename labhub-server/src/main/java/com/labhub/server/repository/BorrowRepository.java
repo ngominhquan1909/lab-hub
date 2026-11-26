@@ -232,6 +232,27 @@ public class BorrowRepository {
     }
 
     /**
+     * Cancels a PENDING or APPROVED borrow request (before checkout).
+     *
+     * @param requestId   borrow request ID
+     * @param processedBy user performing the cancellation
+     * @throws SQLException on DB error, or if the request is not in a cancellable state
+     */
+    public void cancel(long requestId, long processedBy) throws SQLException {
+        String sql = "UPDATE borrow_requests SET status = 'CANCELLED', processed_by_id = ? "
+                + "WHERE id = ? AND status IN ('PENDING', 'APPROVED')";
+        try (Connection conn = db.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setLong(1, processedBy);
+            ps.setLong(2, requestId);
+            int rows = ps.executeUpdate();
+            if (rows == 0) {
+                throw new SQLException("Borrow request " + requestId + " is not in PENDING state.");
+            }
+        }
+    }
+
+    /**
      * Records the physical equipment checkout (APPROVED → ACTIVE).
      * Also records condition at checkout for each item.
      *

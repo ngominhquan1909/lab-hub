@@ -179,9 +179,14 @@ public class BorrowHandler extends BaseHandler {
     private Response handleCancel(Request request, UserDto currentUser) {
         // Cancellation allowed by requester or manager — business logic enforces scope
         long id = longOrDefault(request.getPayload(), "id", 0);
-        // Simply update status to CANCELLED (service layer enforced by state machine)
-        return Response.error(request.getRequestId(), "NOT_IMPLEMENTED",
-                "Cancel via BORROW_CANCEL is not yet wired — set status to CANCELLED manually.");
+        if (id <= 0) {
+            return Response.error(request.getRequestId(), "VALIDATION_ERROR", "Request ID required.");
+        }
+        ServiceResult<BorrowRequestDto> result = borrowService.cancel(id, currentUser);
+        return result.isSuccess()
+                ? Response.ok(request.getRequestId(), "Borrow request cancelled.",
+                    toJsonNode(result.getData()))
+                : Response.error(request.getRequestId(), "CONFLICT", result.getErrorMessage());
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────
