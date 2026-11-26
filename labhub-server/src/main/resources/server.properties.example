@@ -1,0 +1,36 @@
+# ============================================================
+# LabHub Server — Configuration Template
+# Copy this file to server.properties and fill in real values.
+# server.properties is listed in .gitignore — NEVER commit it.
+# ============================================================
+
+# ── Server socket ───────────────────────────────────────────
+server.host=localhost
+server.port=9090
+
+# Maximum number of concurrent client connections handled by the thread pool.
+server.max.threads=20
+
+# ── Database ────────────────────────────────────────────────
+db.host=localhost
+db.port=3306
+db.name=labhub
+db.username=labhub_user
+db.password=CHANGE_ME
+
+# HikariCP connection pool settings
+db.pool.max.size=10
+db.pool.min.idle=2
+db.pool.connection.timeout.ms=30000
+db.pool.idle.timeout.ms=600000
+db.pool.max.lifetime.ms=1800000
+
+# ── Session ─────────────────────────────────────────────────
+# Session token lifetime in minutes (0 = no expiry, not recommended for production)
+session.timeout.minutes=480
+
+# ── Booking policy ──────────────────────────────────────────
+# How far in advance a booking can be made (days)
+booking.max.advance.days=90
+# Minimum booking duration (minutes)
+booking.min.duration.minutes=30

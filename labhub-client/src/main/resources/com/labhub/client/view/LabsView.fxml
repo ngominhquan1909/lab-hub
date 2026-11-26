@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.labhub.client.controller.LabsController"
+      style="-fx-padding:24; -fx-background-color:#F5F4EF;" spacing="16">
+
+    <HBox styleClass="toolbar" alignment="CENTER_LEFT" spacing="10">
+        <TextField fx:id="searchField" promptText="Search labs…"
+                   styleClass="search-field" onAction="#onSearch"/>
+        <Button text="Search" styleClass="btn-secondary" onAction="#onSearch"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="addLabBtn" text="+ Add Lab"
+                styleClass="btn-primary" onAction="#onAddLab"/>
+    </HBox>
+
+    <HBox fx:id="loadingBox" alignment="CENTER_LEFT" spacing="8" managed="false" visible="false">
+        <ProgressIndicator prefWidth="16" prefHeight="16"/>
+        <Label text="Loading…" style="-fx-text-fill:#657078;"/>
+    </HBox>
+
+    <TableView fx:id="labsTable" VBox.vgrow="ALWAYS" styleClass="table-view"
+               onMouseClicked="#onRowClicked">
+        <columns>
+            <TableColumn fx:id="colCode"     text="CODE"      prefWidth="120"/>
+            <TableColumn fx:id="colName"     text="NAME"      prefWidth="220"/>
+            <TableColumn fx:id="colBuilding" text="BUILDING"  prefWidth="140"/>
+            <TableColumn fx:id="colFloor"    text="FLOOR"     prefWidth="70"/>
+            <TableColumn fx:id="colCapacity" text="CAPACITY"  prefWidth="90"/>
+            <TableColumn fx:id="colType"     text="TYPE"      prefWidth="130"/>
+            <TableColumn fx:id="colEquipCnt" text="EQUIPMENT" prefWidth="100"/>
+            <TableColumn fx:id="colStatus"   text="STATUS"    prefWidth="100"/>
+        </columns>
+        <placeholder>
+            <VBox styleClass="empty-state-box" alignment="CENTER">
+                <Label text="No laboratories found" styleClass="empty-state-title"/>
+            </VBox>
+        </placeholder>
+    </TableView>
+
+    <HBox alignment="CENTER_RIGHT" spacing="12">
+        <Label fx:id="pageInfoLabel" text="" style="-fx-text-fill:#657078; -fx-font-size:12px;"/>
+        <Button fx:id="prevBtn" text="← Previous" styleClass="btn-secondary" onAction="#onPrevPage"/>
+        <Button fx:id="nextBtn" text="Next →" styleClass="btn-secondary" onAction="#onNextPage"/>
+    </HBox>
+</VBox>

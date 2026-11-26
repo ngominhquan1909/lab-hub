@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+<ScrollPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.labhub.client.controller.DashboardController"
+            fitToWidth="true" hbarPolicy="NEVER"
+            styleClass="content-scroll">
+    <VBox spacing="24" style="-fx-padding: 24;">
+
+        <!-- Loading indicator -->
+        <HBox fx:id="loadingBox" alignment="CENTER" spacing="8" managed="false" visible="false">
+            <ProgressIndicator prefWidth="20" prefHeight="20"/>
+            <Label text="Loading dashboard…" style="-fx-text-fill:#657078;"/>
+        </HBox>
+
+        <!-- ── Row 1: Key figures ── -->
+        <VBox spacing="12">
+            <HBox alignment="CENTER_LEFT" spacing="8">
+                <Label text="Operations Summary" styleClass="section-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="Refresh" styleClass="btn-ghost" onAction="#onRefresh"/>
+            </HBox>
+
+            <GridPane hgap="12" vgap="12">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="20"/>
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="20"/>
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="20"/>
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="20"/>
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="20"/>
+                </columnConstraints>
+
+                <!-- Active Labs -->
+                <VBox styleClass="stat-card" GridPane.columnIndex="0">
+                    <Label fx:id="totalLabsValue" text="—" styleClass="stat-card-value"/>
+                    <Label text="ACTIVE LABS" styleClass="stat-card-label"/>
+                </VBox>
+
+                <!-- Total Equipment -->
+                <VBox styleClass="stat-card" GridPane.columnIndex="1">
+                    <Label fx:id="totalEquipValue" text="—" styleClass="stat-card-value"/>
+                    <Label text="TOTAL EQUIPMENT" styleClass="stat-card-label"/>
+                </VBox>
+
+                <!-- Available -->
+                <VBox styleClass="stat-card stat-card-success" GridPane.columnIndex="2">
+                    <Label fx:id="availableEquipValue" text="—" styleClass="stat-card-value"
+                           style="-fx-text-fill:#3A7D44;"/>
+                    <Label text="AVAILABLE" styleClass="stat-card-label"/>
+                </VBox>
+
+                <!-- Maintenance -->
+                <VBox styleClass="stat-card stat-card-warning" GridPane.columnIndex="3">
+                    <Label fx:id="maintenanceValue" text="—" styleClass="stat-card-value"
+                           style="-fx-text-fill:#9B6A00;"/>
+                    <Label text="MAINTENANCE" styleClass="stat-card-label"/>
+                </VBox>
+
+                <!-- Overdue -->
+                <VBox styleClass="stat-card stat-card-danger" GridPane.columnIndex="4">
+                    <Label fx:id="overdueValue" text="—" styleClass="stat-card-value"
+                           style="-fx-text-fill:#C0392B;"/>
+                    <Label text="OVERDUE ITEMS" styleClass="stat-card-label"/>
+                </VBox>
+            </GridPane>
+        </VBox>
+
+        <!-- ── Row 2: Pending action counts ── -->
+        <HBox spacing="12">
+            <!-- Pending Bookings -->
+            <VBox styleClass="stat-card stat-card-accent" spacing="6" HBox.hgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <Label fx:id="pendingBookingsValue" text="—"
+                           style="-fx-font-size:28px; -fx-font-weight:bold; -fx-text-fill:#C65336;"/>
+                    <VBox>
+                        <Label text="Pending Bookings" styleClass="stat-card-label"/>
+                        <Label text="Awaiting approval" style="-fx-font-size:11px; -fx-text-fill:#A0917A;"/>
+                    </VBox>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="Review →" styleClass="btn-ghost"
+                            style="-fx-text-fill:#C65336;"
+                            onAction="#onGoToBookings"/>
+                </HBox>
+            </VBox>
+
+            <!-- Pending Borrows -->
+            <VBox styleClass="stat-card stat-card-accent" spacing="6" HBox.hgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <Label fx:id="pendingBorrowsValue" text="—"
+                           style="-fx-font-size:28px; -fx-font-weight:bold; -fx-text-fill:#C65336;"/>
+                    <VBox>
+                        <Label text="Pending Loans" styleClass="stat-card-label"/>
+                        <Label text="Equipment requests" style="-fx-font-size:11px; -fx-text-fill:#A0917A;"/>
+                    </VBox>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="Review →" styleClass="btn-ghost"
+                            style="-fx-text-fill:#C65336;"
+                            onAction="#onGoToBorrow"/>
+                </HBox>
+            </VBox>
+
+            <!-- Open Maintenance -->
+            <VBox styleClass="stat-card" spacing="6" HBox.hgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <Label fx:id="openMaintenanceValue" text="—"
+                           style="-fx-font-size:28px; -fx-font-weight:bold; -fx-text-fill:#9B6A00;"/>
+                    <VBox>
+                        <Label text="Open Tickets" styleClass="stat-card-label"/>
+                        <Label text="Maintenance queue" style="-fx-font-size:11px; -fx-text-fill:#A0917A;"/>
+                    </VBox>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="Review →" styleClass="btn-ghost"
+                            style="-fx-text-fill:#9B6A00;"
+                            onAction="#onGoToMaintenance"/>
+                </HBox>
+            </VBox>
+        </HBox>
+
+        <!-- ── Row 3: Today's bookings ── -->
+        <VBox spacing="12">
+            <HBox alignment="CENTER_LEFT">
+                <Label text="Today's Lab Schedule" styleClass="section-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="todayBookingsLabel" text=""
+                       style="-fx-text-fill:#657078; -fx-font-size:12px;"/>
+            </HBox>
+            <Separator/>
+
+            <TableView fx:id="todayTable" prefHeight="200"
+                       placeholder="&lt;Label text='No bookings scheduled for today' styleClass='empty-state-title'/&gt;"
+                       styleClass="table-view">
+                <columns>
+                    <TableColumn fx:id="todayLabCol" text="LAB" prefWidth="160"/>
+                    <TableColumn fx:id="todayTimeCol" text="TIME" prefWidth="180"/>
+                    <TableColumn fx:id="todayPurposeCol" text="PURPOSE" prefWidth="300"/>
+                    <TableColumn fx:id="todayRequesterCol" text="REQUESTER" prefWidth="160"/>
+                    <TableColumn fx:id="todayStatusCol" text="STATUS" prefWidth="100"/>
+                </columns>
+            </TableView>
+        </VBox>
+
+    </VBox>
+</ScrollPane>

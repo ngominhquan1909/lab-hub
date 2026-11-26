@@ -1,0 +1,41 @@
+# Maven
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# IDE
+.idea/
+*.iml
+*.iws
+.eclipse/
+.settings/
+.classpath
+.project
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Secrets — NEVER commit these
+server.properties
+client.properties
+.env
+*.env.local
+
+# Logs
+logs/
+*.log
+
+# Build output
+*.class
+*.jar
+

@@ -1,0 +1,6 @@
+# LabHub Client Configuration
+# Copy to client.properties and adjust.
+server.host=localhost
+server.port=9090
+server.connect.timeout.ms=5000
+server.read.timeout.ms=15000

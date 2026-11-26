@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.labhub.client.controller.BorrowController"
+      style="-fx-padding:24; -fx-background-color:#F5F4EF;" spacing="16">
+
+    <HBox styleClass="toolbar" alignment="CENTER_LEFT" spacing="10">
+        <ComboBox fx:id="statusFilter" promptText="All Statuses"
+                  styleClass="combo-box" prefWidth="150" onAction="#onFilter"/>
+        <Button text="Filter" styleClass="btn-secondary" onAction="#onFilter"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="newRequestBtn" text="+ New Borrow Request"
+                styleClass="btn-primary" onAction="#onNewRequest"/>
+    </HBox>
+
+    <HBox fx:id="loadingBox" alignment="CENTER_LEFT" spacing="8" managed="false" visible="false">
+        <ProgressIndicator prefWidth="16" prefHeight="16"/>
+        <Label text="Loading…" style="-fx-text-fill:#657078;"/>
+    </HBox>
+
+    <TableView fx:id="borrowTable" VBox.vgrow="ALWAYS" styleClass="table-view"
+               onMouseClicked="#onRowClicked">
+        <columns>
+            <TableColumn fx:id="colId"         text="#"          prefWidth="60"/>
+            <TableColumn fx:id="colRequester"  text="REQUESTER"  prefWidth="150"/>
+            <TableColumn fx:id="colPurpose"    text="PURPOSE"    prefWidth="260"/>
+            <TableColumn fx:id="colItems"      text="ITEMS"      prefWidth="60"/>
+            <TableColumn fx:id="colDueDate"    text="DUE DATE"   prefWidth="130"/>
+            <TableColumn fx:id="colStatus"     text="STATUS"     prefWidth="110"/>
+            <TableColumn fx:id="colActions"    text="ACTIONS"    prefWidth="160"/>
+        </columns>
+        <placeholder>
+            <VBox styleClass="empty-state-box" alignment="CENTER">
+                <Label text="No borrow requests found" styleClass="empty-state-title"/>
+            </VBox>
+        </placeholder>
+    </TableView>
+
+    <HBox alignment="CENTER_RIGHT" spacing="12">
+        <Label fx:id="pageInfoLabel" text="" style="-fx-text-fill:#657078; -fx-font-size:12px;"/>
+        <Button fx:id="prevBtn" text="← Previous" styleClass="btn-secondary" onAction="#onPrevPage"/>
+        <Button fx:id="nextBtn" text="Next →" styleClass="btn-secondary" onAction="#onNextPage"/>
+    </HBox>
+</VBox>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.labhub.client.controller.AuditController"
+      style="-fx-padding:24; -fx-background-color:#F5F4EF;" spacing="16">
+
+    <HBox styleClass="toolbar" alignment="CENTER_LEFT" spacing="10">
+        <TextField fx:id="searchField" promptText="Filter by action…"
+                   styleClass="search-field" onAction="#onSearch"/>
+        <Button text="Search" styleClass="btn-secondary" onAction="#onSearch"/>
+        <Region HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <HBox fx:id="loadingBox" alignment="CENTER_LEFT" spacing="8" managed="false" visible="false">
+        <ProgressIndicator prefWidth="16" prefHeight="16"/>
+        <Label text="Loading…" style="-fx-text-fill:#657078;"/>
+    </HBox>
+
+    <TableView fx:id="auditTable" VBox.vgrow="ALWAYS" styleClass="table-view">
+        <columns>
+            <TableColumn fx:id="colTimestamp" text="TIMESTAMP"   prefWidth="160"/>
+            <TableColumn fx:id="colActor"     text="ACTOR"       prefWidth="150"/>
+            <TableColumn fx:id="colAction"    text="ACTION"      prefWidth="200"/>
+            <TableColumn fx:id="colTarget"    text="TARGET"      prefWidth="130"/>
+            <TableColumn fx:id="colDetails"   text="DETAILS"     prefWidth="400"/>
+        </columns>
+        <placeholder>
+            <VBox styleClass="empty-state-box" alignment="CENTER">
+                <Label text="No audit entries found" styleClass="empty-state-title"/>
+            </VBox>
+        </placeholder>
+    </TableView>
+
+    <HBox alignment="CENTER_RIGHT" spacing="12">
+        <Label fx:id="pageInfoLabel" text="" style="-fx-text-fill:#657078; -fx-font-size:12px;"/>
+        <Button fx:id="prevBtn" text="← Previous" styleClass="btn-secondary" onAction="#onPrevPage"/>
+        <Button fx:id="nextBtn" text="Next →" styleClass="btn-secondary" onAction="#onNextPage"/>
+    </HBox>
+</VBox>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.labhub.client.controller.MainController"
+            style="-fx-background-color: #F5F4EF;">
+
+    <!-- ── LEFT — Sidebar ── -->
+    <left>
+        <VBox styleClass="sidebar">
+
+            <!-- Logo -->
+            <VBox styleClass="sidebar-logo-box" spacing="2">
+                <Label text="LabHub" styleClass="sidebar-logo-label"/>
+                <Label text="LAB OPERATIONS" styleClass="sidebar-logo-sub"/>
+            </VBox>
+
+            <!-- Navigation -->
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="NEVER"
+                        style="-fx-background-color:transparent; -fx-background:transparent;"
+                        VBox.vgrow="ALWAYS">
+                <VBox>
+
+                    <!-- Overview -->
+                    <Label text="OVERVIEW" styleClass="sidebar-section-label"/>
+                    <Button fx:id="navDashboard" text="  Dashboard"
+                            styleClass="sidebar-nav-button" onAction="#onNav"/>
+
+                    <!-- Resources -->
+                    <Label text="RESOURCES" styleClass="sidebar-section-label"/>
+                    <Button fx:id="navLabs" text="  Laboratories"
+                            styleClass="sidebar-nav-button" onAction="#onNav"/>
+                    <Button fx:id="navEquipment" text="  Equipment"
+                            styleClass="sidebar-nav-button" onAction="#onNav"/>
+
+                    <!-- Operations -->
+                    <Label text="OPERATIONS" styleClass="sidebar-section-label"/>
+                    <Button fx:id="navBookings" text="  Room Bookings"
+                            styleClass="sidebar-nav-button" onAction="#onNav"/>
+                    <Button fx:id="navBorrow" text="  Borrow Requests"
+                            styleClass="sidebar-nav-button" onAction="#onNav"/>
+                    <Button fx:id="navMaintenance" text="  Maintenance"
+                            styleClass="sidebar-nav-button" onAction="#onNav"/>
+
+                    <!-- Admin -->
+                    <Label fx:id="adminSectionLabel" text="ADMINISTRATION"
+                           styleClass="sidebar-section-label" managed="false" visible="false"/>
+                    <Button fx:id="navUsers" text="  User Accounts"
+                            styleClass="sidebar-nav-button" onAction="#onNav"
+                            managed="false" visible="false"/>
+                    <Button fx:id="navAudit" text="  Audit Log"
+                            styleClass="sidebar-nav-button" onAction="#onNav"
+                            managed="false" visible="false"/>
+                </VBox>
+            </ScrollPane>
+
+            <!-- User info + logout -->
+            <VBox styleClass="sidebar-user-box" spacing="8">
+                <VBox spacing="2">
+                    <Label fx:id="userNameLabel" text="—" styleClass="sidebar-user-name"/>
+                    <Label fx:id="userRoleLabel" text="—" styleClass="sidebar-user-role"/>
+                </VBox>
+                <Button text="Sign Out" styleClass="btn-ghost"
+                        onAction="#onLogout"
+                        style="-fx-text-fill:#8A9099; -fx-padding:4 0;"/>
+            </VBox>
+        </VBox>
+    </left>
+
+    <!-- ── CENTER — Dynamic content ── -->
+    <center>
+        <VBox>
+            <!-- Top bar with page title -->
+            <HBox styleClass="topbar" alignment="CENTER_LEFT" spacing="12">
+                <VBox>
+                    <Label fx:id="pageTitleLabel" text="Dashboard" styleClass="page-title"/>
+                    <Label fx:id="pageSubtitleLabel" text="" styleClass="page-subtitle"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <!-- Notification badge for pending items -->
+                <HBox fx:id="pendingBadgeBox" alignment="CENTER" spacing="4"
+                      managed="false" visible="false"
+                      style="-fx-background-color:#FDF3DC; -fx-background-radius:4px; -fx-padding:5 10;">
+                    <Label fx:id="pendingBadgeLabel"
+                           style="-fx-font-size:12px; -fx-text-fill:#9B6A00; -fx-font-weight:bold;"/>
+                </HBox>
+            </HBox>
+
+            <!-- Content swap area -->
+            <StackPane fx:id="contentPane" VBox.vgrow="ALWAYS"
+                       style="-fx-background-color:#F5F4EF;"/>
+        </VBox>
+    </center>
+</BorderPane>

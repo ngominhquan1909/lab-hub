@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.labhub.client.controller.BookingsController"
+      style="-fx-padding:24; -fx-background-color:#F5F4EF;" spacing="16">
+
+    <!-- Toolbar -->
+    <HBox styleClass="toolbar" alignment="CENTER_LEFT" spacing="10">
+        <ComboBox fx:id="statusFilter" promptText="All Statuses"
+                  styleClass="combo-box" prefWidth="150" onAction="#onFilter"/>
+        <ComboBox fx:id="labFilter" promptText="All Labs"
+                  styleClass="combo-box" prefWidth="160" onAction="#onFilter"/>
+        <Button text="Filter" styleClass="btn-secondary" onAction="#onFilter"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="newBookingBtn" text="+ New Booking"
+                styleClass="btn-primary" onAction="#onNewBooking"/>
+    </HBox>
+
+    <!-- Loading -->
+    <HBox fx:id="loadingBox" alignment="CENTER_LEFT" spacing="8" managed="false" visible="false">
+        <ProgressIndicator prefWidth="16" prefHeight="16"/>
+        <Label text="Loading…" style="-fx-text-fill:#657078; -fx-font-size:12px;"/>
+    </HBox>
+
+    <!-- Table -->
+    <TableView fx:id="bookingsTable" VBox.vgrow="ALWAYS"
+               styleClass="table-view" onMouseClicked="#onRowClicked">
+        <columns>
+            <TableColumn fx:id="colLab"       text="LAB"        prefWidth="160"/>
+            <TableColumn fx:id="colDate"      text="DATE"       prefWidth="100"/>
+            <TableColumn fx:id="colTime"      text="TIME SLOT"  prefWidth="150"/>
+            <TableColumn fx:id="colPurpose"   text="PURPOSE"    prefWidth="260"/>
+            <TableColumn fx:id="colRequester" text="REQUESTER"  prefWidth="140"/>
+            <TableColumn fx:id="colStatus"    text="STATUS"     prefWidth="110"/>
+            <TableColumn fx:id="colActions"   text="ACTIONS"    prefWidth="160"/>
+        </columns>
+        <placeholder>
+            <VBox styleClass="empty-state-box" alignment="CENTER">
+                <Label text="No bookings found" styleClass="empty-state-title"/>
+                <Label text="Create a new booking or adjust your filters."
+                       styleClass="empty-state-subtitle"/>
+            </VBox>
+        </placeholder>
+    </TableView>
+
+    <!-- Pagination -->
+    <HBox alignment="CENTER_RIGHT" spacing="12">
+        <Label fx:id="pageInfoLabel" text="" style="-fx-text-fill:#657078; -fx-font-size:12px;"/>
+        <Button fx:id="prevBtn" text="← Previous" styleClass="btn-secondary" onAction="#onPrevPage"/>
+        <Button fx:id="nextBtn" text="Next →"      styleClass="btn-secondary" onAction="#onNextPage"/>
+    </HBox>
+</VBox>

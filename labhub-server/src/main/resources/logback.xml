@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    LabHub Server — Logback Configuration
+    Outputs to console and rolling file.
+    Adjust log level by changing the root level or add specific logger overrides.
+    Log directory defaults to ./logs relative to the working directory.
+-->
+<configuration>
+
+    <property name="LOG_DIR"     value="logs"/>
+    <property name="LOG_FILE"    value="labhub-server"/>
+    <property name="MAX_FILE_SIZE" value="20MB"/>
+    <property name="MAX_HISTORY"   value="30"/>
+
+    <!-- ── Console appender ─────────────────────────────────────────── -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} — %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ── Rolling file appender ────────────────────────────────────── -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/${LOG_FILE}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/${LOG_FILE}.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{40} — %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ── Logger overrides ──────────────────────────────────────────── -->
+    <!-- Suppress noisy HikariCP startup messages at INFO; promote to WARN for production -->
+    <logger name="com.zaxxer.hikari" level="WARN"/>
+    <!-- Show DEBUG for our own packages during development -->
+    <logger name="com.labhub.server" level="DEBUG"/>
+
+    <!-- ── Root logger ───────────────────────────────────────────────── -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
+
+</configuration>

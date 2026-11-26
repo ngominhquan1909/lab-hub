@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.labhub.client.controller.MaintenanceController"
+      style="-fx-padding:24; -fx-background-color:#F5F4EF;" spacing="16">
+
+    <HBox styleClass="toolbar" alignment="CENTER_LEFT" spacing="10">
+        <ComboBox fx:id="statusFilter"   promptText="All Statuses"  styleClass="combo-box" prefWidth="140" onAction="#onFilter"/>
+        <ComboBox fx:id="priorityFilter" promptText="All Priorities" styleClass="combo-box" prefWidth="140" onAction="#onFilter"/>
+        <Button text="Filter" styleClass="btn-secondary" onAction="#onFilter"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="newTicketBtn" text="+ File Ticket"
+                styleClass="btn-primary" onAction="#onNewTicket"/>
+    </HBox>
+
+    <HBox fx:id="loadingBox" alignment="CENTER_LEFT" spacing="8" managed="false" visible="false">
+        <ProgressIndicator prefWidth="16" prefHeight="16"/>
+        <Label text="Loading…" style="-fx-text-fill:#657078;"/>
+    </HBox>
+
+    <TableView fx:id="maintenanceTable" VBox.vgrow="ALWAYS" styleClass="table-view"
+               onMouseClicked="#onRowClicked">
+        <columns>
+            <TableColumn fx:id="colAsset"    text="ASSET"      prefWidth="120"/>
+            <TableColumn fx:id="colEquipment" text="EQUIPMENT" prefWidth="200"/>
+            <TableColumn fx:id="colPriority" text="PRIORITY"   prefWidth="90"/>
+            <TableColumn fx:id="colStatus"   text="STATUS"     prefWidth="110"/>
+            <TableColumn fx:id="colAssignee" text="ASSIGNEE"   prefWidth="130"/>
+            <TableColumn fx:id="colOpened"   text="OPENED"     prefWidth="130"/>
+            <TableColumn fx:id="colActions"  text="ACTIONS"    prefWidth="130"/>
+        </columns>
+        <placeholder>
+            <VBox styleClass="empty-state-box" alignment="CENTER">
+                <Label text="No maintenance tickets" styleClass="empty-state-title"/>
+            </VBox>
+        </placeholder>
+    </TableView>
+
+    <HBox alignment="CENTER_RIGHT" spacing="12">
+        <Label fx:id="pageInfoLabel" text="" style="-fx-text-fill:#657078; -fx-font-size:12px;"/>
+        <Button fx:id="prevBtn" text="← Previous" styleClass="btn-secondary" onAction="#onPrevPage"/>
+        <Button fx:id="nextBtn" text="Next →" styleClass="btn-secondary" onAction="#onNextPage"/>
+    </HBox>
+</VBox>

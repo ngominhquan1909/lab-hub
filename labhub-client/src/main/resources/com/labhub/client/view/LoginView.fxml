@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="com.labhub.client.controller.LoginController"
+           styleClass="root"
+           style="-fx-background-color: #EAE9E3;">
+
+    <VBox alignment="CENTER" spacing="0">
+        <!-- Branding above panel -->
+        <VBox alignment="CENTER" spacing="4" style="-fx-padding: 0 0 28 0;">
+            <Label text="LabHub" style="-fx-font-size:28px; -fx-font-weight:bold; -fx-text-fill:#202426;"/>
+            <Label text="LABORATORY OPERATIONS SYSTEM"
+                   style="-fx-font-size:9px; -fx-letter-spacing:2px; -fx-text-fill:#9A9890;"/>
+        </VBox>
+
+        <!-- Login card -->
+        <VBox styleClass="login-panel" spacing="20">
+            <Label text="Sign in to your account" styleClass="login-subtitle"/>
+
+            <!-- Error box (hidden by default) -->
+            <HBox fx:id="errorBox" styleClass="login-error-box"
+                  managed="false" visible="false" alignment="CENTER_LEFT" spacing="8">
+                <Label fx:id="errorLabel" styleClass="login-error-label" wrapText="true"
+                       HBox.hgrow="ALWAYS"/>
+            </HBox>
+
+            <!-- Username -->
+            <VBox spacing="6">
+                <Label text="USERNAME" styleClass="field-label"/>
+                <TextField fx:id="usernameField" promptText="Enter your username"
+                           styleClass="text-field" onAction="#onLogin"/>
+            </VBox>
+
+            <!-- Password -->
+            <VBox spacing="6">
+                <Label text="PASSWORD" styleClass="field-label"/>
+                <PasswordField fx:id="passwordField" promptText="Enter your password"
+                               styleClass="password-field" onAction="#onLogin"/>
+            </VBox>
+
+            <!-- Login button -->
+            <Button fx:id="loginButton" text="Sign In" onAction="#onLogin"
+                    styleClass="btn-primary" maxWidth="Infinity"
+                    style="-fx-padding: 11 20; -fx-font-size:14px;"/>
+
+            <!-- Loading indicator -->
+            <HBox alignment="CENTER" fx:id="loadingBox" managed="false" visible="false" spacing="8">
+                <ProgressIndicator styleClass="progress-indicator"
+                                   prefWidth="18" prefHeight="18"/>
+                <Label text="Signing in…" style="-fx-text-fill:#657078; -fx-font-size:12px;"/>
+            </HBox>
+        </VBox>
+
+        <!-- Footer -->
+        <Label text="© LabHub University System"
+               style="-fx-font-size:11px; -fx-text-fill:#A0A8B0; -fx-padding: 24 0 0 0;"/>
+    </VBox>
+</StackPane>
