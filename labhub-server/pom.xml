@@ -43,7 +43,7 @@
             <artifactId>mysql-connector-j</artifactId>
         </dependency>
 
-        <!-- Password hashing — BCrypt, cost factor 12 -->
+        <!-- Password hashing - BCrypt, cost factor 12 -->
         <dependency>
             <groupId>at.favre.lib</groupId>
             <artifactId>bcrypt</artifactId>

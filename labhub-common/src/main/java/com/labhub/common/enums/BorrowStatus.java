@@ -5,13 +5,13 @@ package com.labhub.common.enums;
  *
  * <p>Valid transitions:
  * <pre>
- *   PENDING   → APPROVED | REJECTED | CANCELLED
- *   APPROVED  → ACTIVE (checkout recorded) | CANCELLED
- *   ACTIVE    → RETURNED | OVERDUE (computed when past due date)
- *   OVERDUE   → RETURNED
- *   REJECTED  → (terminal)
- *   CANCELLED → (terminal)
- *   RETURNED  → (terminal)
+ *   PENDING   -> APPROVED | REJECTED | CANCELLED
+ *   APPROVED  -> ACTIVE (checkout recorded) | CANCELLED
+ *   ACTIVE    -> RETURNED | OVERDUE (computed when past due date)
+ *   OVERDUE   -> RETURNED
+ *   REJECTED  -> (terminal)
+ *   CANCELLED -> (terminal)
+ *   RETURNED  -> (terminal)
  * </pre>
  *
  * <p>OVERDUE is a computed overlay: items can still be returned from OVERDUE state.

@@ -5,11 +5,11 @@ package com.labhub.common.enums;
  *
  * <p>Valid transitions:
  * <pre>
- *   OPEN       → ASSIGNED | IN_PROGRESS | RESOLVED
- *   ASSIGNED   → IN_PROGRESS | RESOLVED
- *   IN_PROGRESS→ RESOLVED
- *   RESOLVED   → CLOSED | IN_PROGRESS (re-opened if fix did not hold)
- *   CLOSED     → (terminal)
+ *   OPEN       -> ASSIGNED | IN_PROGRESS | RESOLVED
+ *   ASSIGNED   -> IN_PROGRESS | RESOLVED
+ *   IN_PROGRESS-> RESOLVED
+ *   RESOLVED   -> CLOSED | IN_PROGRESS (re-opened if fix did not hold)
+ *   CLOSED     -> (terminal)
  * </pre>
  */
 public enum MaintenanceStatus {

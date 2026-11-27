@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Expired sessions are removed lazily on access and also via a periodic cleanup
  * called from the main server thread.
  *
- * <p>Tokens are UUID v4 strings — 122 bits of randomness; not guessable.
+ * <p>Tokens are UUID v4 strings - 122 bits of randomness; not guessable.
  * Database credentials and password hashes are never stored here.
  */
 public final class SessionManager {
@@ -29,14 +29,9 @@ public final class SessionManager {
     private final Map<String, Session> sessions = new ConcurrentHashMap<>();
     private final int timeoutMinutes;
 
-    /**
-     * @param timeoutMinutes session lifetime after last activity; 0 = no expiry
-     */
     public SessionManager(int timeoutMinutes) {
         this.timeoutMinutes = timeoutMinutes;
     }
-
-    // ── Public API ────────────────────────────────────────────────────────
 
     /**
      * Creates a new session for the authenticated user and returns the token.
@@ -111,8 +106,6 @@ public final class SessionManager {
         return sessions.size();
     }
 
-    // ── Authorization helpers ─────────────────────────────────────────────
-
     /**
      * Returns true if the user associated with the token has at least one of the given roles.
      *
@@ -137,8 +130,6 @@ public final class SessionManager {
                 .orElse(false);
     }
 
-    // ── Internals ─────────────────────────────────────────────────────────
-
     private boolean isExpired(Session session) {
         if (timeoutMinutes <= 0) {
             return false;
@@ -146,8 +137,6 @@ public final class SessionManager {
         Instant expiry = session.lastActivity().plusSeconds((long) timeoutMinutes * 60);
         return Instant.now().isAfter(expiry);
     }
-
-    // ── Inner record ──────────────────────────────────────────────────────
 
     /**
      * Internal session record. Package-private for testability.
@@ -164,13 +153,10 @@ public final class SessionManager {
             this.lastActivity = lastActivity;
         }
 
-        /** @return session token */
         String token() { return token; }
 
-        /** @return authenticated user DTO */
         UserDto user() { return user; }
 
-        /** @return last activity timestamp */
         Instant lastActivity() { return lastActivity; }
 
         /** Updates last activity to now. */

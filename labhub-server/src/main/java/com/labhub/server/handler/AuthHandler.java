@@ -14,9 +14,6 @@ public class AuthHandler extends BaseHandler {
 
     private final AuthService authService;
 
-    /**
-     * @param authService authentication business logic
-     */
     public AuthHandler(AuthService authService) {
         this.authService = authService;
     }
@@ -31,8 +28,6 @@ public class AuthHandler extends BaseHandler {
                     "AuthHandler does not handle " + request.getType());
         };
     }
-
-    // ── Handlers ──────────────────────────────────────────────────────────
 
     private Response handleLogin(Request request) {
         JsonNode payload = request.getPayload();

@@ -16,9 +16,6 @@ public class DashboardHandler extends BaseHandler {
 
     private final DashboardRepository dashboardRepository;
 
-    /**
-     * @param dashboardRepository stats and audit data access
-     */
     public DashboardHandler(DashboardRepository dashboardRepository) {
         this.dashboardRepository = dashboardRepository;
     }
@@ -33,8 +30,6 @@ public class DashboardHandler extends BaseHandler {
                     "DashboardHandler does not handle " + request.getType());
         };
     }
-
-    // ── Handlers ──────────────────────────────────────────────────────────
 
     private Response handleStats(Request request) {
         DashboardStatsDto stats = dashboardRepository.getStats();

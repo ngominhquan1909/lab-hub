@@ -31,14 +31,9 @@ public class EquipmentRepository {
 
     private final DatabaseManager db;
 
-    /**
-     * @param db database manager
-     */
     public EquipmentRepository(DatabaseManager db) {
         this.db = db;
     }
-
-    // ── Queries ───────────────────────────────────────────────────────────
 
     /**
      * Finds equipment by its internal ID.
@@ -155,8 +150,6 @@ public class EquipmentRepository {
         }
         return result;
     }
-
-    // ── Mutations ─────────────────────────────────────────────────────────
 
     /**
      * Creates a new equipment record.
@@ -276,8 +269,6 @@ public class EquipmentRepository {
             ps.executeUpdate();
         }
     }
-
-    // ── Internal ──────────────────────────────────────────────────────────
 
     private String baseSql() {
         return "SELECT e.id, e.asset_code, e.name, e.category_id, "

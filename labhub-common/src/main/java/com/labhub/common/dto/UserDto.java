@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * Data transfer object representing a user account.
- * Passwords are NEVER included in this DTO.
+ * Passwords are not included in this DTO.
  */
 public class UserDto {
 
@@ -22,71 +22,46 @@ public class UserDto {
     private LocalDateTime updatedAt;
     private LocalDateTime lastLoginAt;
 
-    // ── Constructors ──────────────────────────────────────────────────────
-
-    /** Required by Jackson. */
     public UserDto() { }
 
-    // ── Getters / setters ──────────────────────────────────────────────────
-
-    /** @return internal user ID */
     public Long getId() { return id; }
 
-    /** @param id internal user ID */
     public void setId(Long id) { this.id = id; }
 
-    /** @return login username */
     public String getUsername() { return username; }
 
-    /** @param username login username */
     public void setUsername(String username) { this.username = username; }
 
-    /** @return email address */
     public String getEmail() { return email; }
 
-    /** @param email email address */
     public void setEmail(String email) { this.email = email; }
 
-    /** @return display name */
     public String getFullName() { return fullName; }
 
-    /** @param fullName display name */
     public void setFullName(String fullName) { this.fullName = fullName; }
 
-    /** @return phone number */
     public String getPhoneNumber() { return phoneNumber; }
 
-    /** @param phoneNumber phone number */
     public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
 
-    /** @return list of roles assigned to this user */
     public List<UserRole> getRoles() { return roles; }
 
-    /** @param roles list of roles */
     public void setRoles(List<UserRole> roles) { this.roles = roles; }
 
-    /** @return whether this account is enabled */
     public boolean isActive() { return active; }
 
-    /** @param active enable/disable flag */
     public void setActive(boolean active) { this.active = active; }
 
-    /** @return account creation timestamp (UTC) */
     public LocalDateTime getCreatedAt() { return createdAt; }
 
-    /** @param createdAt creation timestamp */
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
-    /** @return last update timestamp (UTC) */
     public LocalDateTime getUpdatedAt() { return updatedAt; }
 
-    /** @param updatedAt update timestamp */
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 
-    /** @return timestamp of last successful login (UTC) */
     public LocalDateTime getLastLoginAt() { return lastLoginAt; }
 
-    /** @param lastLoginAt last login timestamp */
     public void setLastLoginAt(LocalDateTime lastLoginAt) { this.lastLoginAt = lastLoginAt; }
 
     /** Convenience: check if user has a specific role. */

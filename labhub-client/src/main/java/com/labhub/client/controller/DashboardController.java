@@ -59,8 +59,6 @@ public class DashboardController implements Initializable {
         loadData();
     }
 
-    // ── Event handlers ────────────────────────────────────────────────────
-
     @FXML
     private void onRefresh() {
         loadData();
@@ -68,7 +66,7 @@ public class DashboardController implements Initializable {
 
     @FXML
     private void onGoToBookings() {
-        // Delegate navigation up — this is a simplification; a proper event bus would be better
+        // Delegate navigation up - this is a simplification; a proper event bus would be better
         LOG.debug("Navigate to bookings (triggered from dashboard).");
     }
 
@@ -81,8 +79,6 @@ public class DashboardController implements Initializable {
     private void onGoToMaintenance() {
         LOG.debug("Navigate to maintenance (triggered from dashboard).");
     }
-
-    // ── Data loading ──────────────────────────────────────────────────────
 
     private void loadData() {
         setLoading(true);
@@ -127,8 +123,6 @@ public class DashboardController implements Initializable {
             todayTable.getItems().addAll(result.getItems());
         }
     }
-
-    // ── Table setup ───────────────────────────────────────────────────────
 
     private void setupTable() {
         todayLabCol.setCellValueFactory(c ->

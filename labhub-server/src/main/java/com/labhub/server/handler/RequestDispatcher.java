@@ -29,14 +29,9 @@ public final class RequestDispatcher {
     private final Map<RequestType, RequestHandler> handlers = new EnumMap<>(RequestType.class);
     private final SessionManager sessionManager;
 
-    /**
-     * @param sessionManager used for token validation on every non-login request
-     */
     public RequestDispatcher(SessionManager sessionManager) {
         this.sessionManager = sessionManager;
     }
-
-    // ── Registration ──────────────────────────────────────────────────────
 
     /**
      * Registers a handler for a request type.
@@ -50,13 +45,11 @@ public final class RequestDispatcher {
         LOG.debug("Registered handler for {}: {}", type, handler.getClass().getSimpleName());
     }
 
-    // ── Dispatch ──────────────────────────────────────────────────────────
-
     /**
      * Validates the request, authenticates the session, and dispatches to the handler.
      *
      * @param request incoming request (never null)
-     * @return response — always non-null
+     * @return response - always non-null
      */
     public Response dispatch(Request request) {
         // 1. Basic structural validation
@@ -65,7 +58,7 @@ public final class RequestDispatcher {
                     "Request type is required.");
         }
 
-        // 2. Authentication — LOGIN is the only unauthenticated endpoint
+        // 2. Authentication - LOGIN is the only unauthenticated endpoint
         UserDto currentUser = null;
         if (request.getType() != RequestType.LOGIN) {
             Optional<UserDto> sessionUser = sessionManager.validateToken(request.getToken());
@@ -84,7 +77,7 @@ public final class RequestDispatcher {
                     "This feature is not yet available.");
         }
 
-        // 4. Delegate — handler is responsible for its own authorization
+        // 4. Delegate - handler is responsible for its own authorization
         try {
             return handler.handle(request, currentUser);
         } catch (Exception e) {
@@ -94,8 +87,6 @@ public final class RequestDispatcher {
                     "An unexpected error occurred while processing your request.");
         }
     }
-
-    // ── Authorization helper (shared with handlers) ────────────────────────
 
     /**
      * Returns true if the user has at least one of the specified roles.

@@ -34,11 +34,6 @@ public class EquipmentHandler extends BaseHandler {
     private final DashboardRepository dashboardRepository;
     private final com.labhub.server.config.DatabaseManager db;
 
-    /**
-     * @param equipmentRepository equipment data access
-     * @param dashboardRepository audit logging
-     * @param db                  raw DB access for category operations
-     */
     public EquipmentHandler(EquipmentRepository equipmentRepository,
                              DashboardRepository dashboardRepository,
                              com.labhub.server.config.DatabaseManager db) {
@@ -62,8 +57,6 @@ public class EquipmentHandler extends BaseHandler {
                     "EquipmentHandler does not handle " + request.getType());
         };
     }
-
-    // ── Handlers ──────────────────────────────────────────────────────────
 
     private Response handleList(Request request, UserDto currentUser) {
         int page     = intOrDefault(request.getPayload(), "page",     1);

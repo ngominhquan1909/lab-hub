@@ -35,11 +35,6 @@ public class MaintenanceHandler extends BaseHandler {
     private final EquipmentRepository equipmentRepository;
     private final DashboardRepository dashboardRepository;
 
-    /**
-     * @param maintenanceRepository ticket data access
-     * @param equipmentRepository   equipment status transitions
-     * @param dashboardRepository   audit logging
-     */
     public MaintenanceHandler(MaintenanceRepository maintenanceRepository,
                                EquipmentRepository equipmentRepository,
                                DashboardRepository dashboardRepository) {
@@ -62,8 +57,6 @@ public class MaintenanceHandler extends BaseHandler {
                     "MaintenanceHandler does not handle " + request.getType());
         };
     }
-
-    // ── Handlers ──────────────────────────────────────────────────────────
 
     private Response handleList(Request request, UserDto currentUser) {
         int page     = intOrDefault(request.getPayload(), "page",     1);
@@ -161,7 +154,7 @@ public class MaintenanceHandler extends BaseHandler {
         try {
             maintenanceRepository.updateStatus(id, newStatus);
             dashboardRepository.log(currentUser.getId(), "MAINTENANCE_STATUS_CHANGED",
-                    "MAINTENANCE_TICKET", id, "Status → " + newStatus.name());
+                    "MAINTENANCE_TICKET", id, "Status -> " + newStatus.name());
             return Response.ok(request.getRequestId(), "Status updated.",
                     toJsonNode(maintenanceRepository.findById(id).orElseThrow()));
         } catch (SQLException e) {
@@ -242,7 +235,7 @@ public class MaintenanceHandler extends BaseHandler {
 
         try {
             maintenanceRepository.close(id);
-            // Equipment is repaired — restore to AVAILABLE
+            // Equipment is repaired - restore to AVAILABLE
             equipmentRepository.setStatus(equipmentId, EquipmentStatus.AVAILABLE);
             dashboardRepository.log(currentUser.getId(), "MAINTENANCE_CLOSED",
                     "MAINTENANCE_TICKET", id, "Ticket closed; equipment restored to AVAILABLE.");

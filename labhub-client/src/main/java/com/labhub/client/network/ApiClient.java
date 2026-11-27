@@ -40,14 +40,9 @@ public class ApiClient {
     private final ServerConnection connection;
     private String sessionToken;    // null before login
 
-    /**
-     * @param connection an open server connection
-     */
     public ApiClient(ServerConnection connection) {
         this.connection = connection;
     }
-
-    // ── Auth ──────────────────────────────────────────────────────────────
 
     /**
      * Authenticates with the server. Stores the token on success.
@@ -77,8 +72,6 @@ public class ApiClient {
         sessionToken = null;
     }
 
-    // ── Dashboard ─────────────────────────────────────────────────────────
-
     /**
      * Returns current dashboard statistics.
      *
@@ -89,8 +82,6 @@ public class ApiClient {
         Response r = send(RequestType.DASHBOARD_STATS, null);
         return fromPayload(r, DashboardStatsDto.class);
     }
-
-    // ── Labs ──────────────────────────────────────────────────────────────
 
     /**
      * Returns a paginated list of labs.
@@ -133,8 +124,6 @@ public class ApiClient {
         Response r = send(RequestType.LAB_UPDATE, MAPPER.valueToTree(dto));
         return fromPayload(r, LabDto.class);
     }
-
-    // ── Equipment ─────────────────────────────────────────────────────────
 
     /**
      * Returns a paginated list of equipment.
@@ -214,8 +203,6 @@ public class ApiClient {
         }
         return entries;
     }
-
-    // ── Bookings ──────────────────────────────────────────────────────────
 
     /**
      * Returns paginated bookings with optional filters.
@@ -297,8 +284,6 @@ public class ApiClient {
     public void cancelBooking(long bookingId) throws ApiException {
         send(RequestType.BOOKING_CANCEL, MAPPER.createObjectNode().put("id", bookingId));
     }
-
-    // ── Borrow requests ───────────────────────────────────────────────────
 
     /**
      * Returns paginated borrow requests.
@@ -430,8 +415,6 @@ public class ApiClient {
         return fromPayload(r, BorrowRequestDto.class);
     }
 
-    // ── Maintenance ───────────────────────────────────────────────────────
-
     /**
      * Returns paginated maintenance tickets.
      *
@@ -504,8 +487,6 @@ public class ApiClient {
         send(RequestType.MAINTENANCE_CLOSE, MAPPER.createObjectNode().put("id", ticketId));
     }
 
-    // ── Users ─────────────────────────────────────────────────────────────
-
     /**
      * Returns paginated user accounts (admin only).
      *
@@ -556,8 +537,6 @@ public class ApiClient {
         return fromPayload(r, UserDto.class);
     }
 
-    // ── Audit ─────────────────────────────────────────────────────────────
-
     /**
      * Returns paginated audit log entries, newest first (admin/lab-manager only).
      *
@@ -571,8 +550,6 @@ public class ApiClient {
                 MAPPER.createObjectNode().put("page", page).put("pageSize", pageSize));
         return pagedResult(r, AuditLogDto.class);
     }
-
-    // ── Internal ──────────────────────────────────────────────────────────
 
     /**
      * Sends a request and returns the response.

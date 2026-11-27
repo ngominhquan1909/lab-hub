@@ -15,7 +15,7 @@ import com.labhub.common.protocol.Response;
  *   <li>Returning a well-formed {@link Response}.</li>
  * </ul>
  *
- * <p>Handlers must be thread-safe — they may be invoked concurrently by multiple
+ * <p>Handlers must be thread-safe - they may be invoked concurrently by multiple
  * client handler threads. Stateless handlers that delegate to thread-safe services
  * satisfy this automatically.
  */

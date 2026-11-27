@@ -5,11 +5,11 @@ package com.labhub.common.enums;
  *
  * <p>Valid transitions:
  * <pre>
- *   PENDING  → APPROVED | REJECTED | CANCELLED
- *   APPROVED → CANCELLED | COMPLETED
- *   REJECTED → (terminal)
- *   CANCELLED→ (terminal)
- *   COMPLETED→ (terminal)
+ *   PENDING  -> APPROVED | REJECTED | CANCELLED
+ *   APPROVED -> CANCELLED | COMPLETED
+ *   REJECTED -> (terminal)
+ *   CANCELLED-> (terminal)
+ *   COMPLETED-> (terminal)
  * </pre>
  */
 public enum BookingStatus {

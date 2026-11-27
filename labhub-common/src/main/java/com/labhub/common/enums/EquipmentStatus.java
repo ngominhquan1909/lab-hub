@@ -5,12 +5,12 @@ package com.labhub.common.enums;
  *
  * <p>Valid transitions:
  * <pre>
- *   AVAILABLE  → IN_USE | BORROWED | MAINTENANCE | RETIRED
- *   IN_USE     → AVAILABLE | MAINTENANCE
- *   BORROWED   → AVAILABLE | MAINTENANCE
- *   MAINTENANCE→ AVAILABLE | RETIRED
- *   LOST       → (terminal, admin override only)
- *   RETIRED    → (terminal)
+ *   AVAILABLE  -> IN_USE | BORROWED | MAINTENANCE | RETIRED
+ *   IN_USE     -> AVAILABLE | MAINTENANCE
+ *   BORROWED   -> AVAILABLE | MAINTENANCE
+ *   MAINTENANCE-> AVAILABLE | RETIRED
+ *   LOST       -> (terminal, admin override only)
+ *   RETIRED    -> (terminal)
  * </pre>
  */
 public enum EquipmentStatus {

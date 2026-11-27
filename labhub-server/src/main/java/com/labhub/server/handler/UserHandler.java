@@ -29,10 +29,6 @@ public class UserHandler extends BaseHandler {
     private final UserRepository userRepository;
     private final DashboardRepository dashboardRepository;
 
-    /**
-     * @param userRepository      user data access
-     * @param dashboardRepository audit logging
-     */
     public UserHandler(UserRepository userRepository, DashboardRepository dashboardRepository) {
         this.userRepository = userRepository;
         this.dashboardRepository = dashboardRepository;
@@ -56,8 +52,6 @@ public class UserHandler extends BaseHandler {
                     "UserHandler does not handle " + request.getType());
         };
     }
-
-    // ── Handlers ──────────────────────────────────────────────────────────
 
     private Response handleList(Request request) {
         int page     = intOrDefault(request.getPayload(), "page",     1);
@@ -178,8 +172,6 @@ public class UserHandler extends BaseHandler {
                     "Failed to update user status.");
         }
     }
-
-    // ── Helper ────────────────────────────────────────────────────────────
 
     private List<UserRole> parseRoles(JsonNode payload) {
         List<UserRole> roles = new ArrayList<>();

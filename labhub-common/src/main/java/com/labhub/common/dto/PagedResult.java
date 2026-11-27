@@ -15,7 +15,6 @@ public class PagedResult<T> {
     private long totalItems;
     private int totalPages;
 
-    /** Required by Jackson. */
     public PagedResult() { }
 
     /**
@@ -35,44 +34,30 @@ public class PagedResult<T> {
         this.totalPages = pageSize > 0 ? (int) Math.ceil((double) totalItems / pageSize) : 0;
     }
 
-    // ── Getters / setters ──────────────────────────────────────────────────
-
-    /** @return items on this page */
     public List<T> getItems() { return items; }
 
-    /** @param items items */
     public void setItems(List<T> items) { this.items = items; }
 
-    /** @return current page number (1-based) */
     public int getPage() { return page; }
 
-    /** @param page page number */
     public void setPage(int page) { this.page = page; }
 
-    /** @return number of items requested per page */
     public int getPageSize() { return pageSize; }
 
-    /** @param pageSize page size */
     public void setPageSize(int pageSize) { this.pageSize = pageSize; }
 
-    /** @return total number of items matching the query */
     public long getTotalItems() { return totalItems; }
 
-    /** @param totalItems total items */
     public void setTotalItems(long totalItems) { this.totalItems = totalItems; }
 
-    /** @return total number of pages */
     public int getTotalPages() { return totalPages; }
 
-    /** @param totalPages total pages */
     public void setTotalPages(int totalPages) { this.totalPages = totalPages; }
 
-    /** @return true if there is a next page */
     public boolean hasNext() {
         return page < totalPages;
     }
 
-    /** @return true if there is a previous page */
     public boolean hasPrevious() {
         return page > 1;
     }

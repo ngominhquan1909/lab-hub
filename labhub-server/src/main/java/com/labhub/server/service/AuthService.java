@@ -30,16 +30,10 @@ public class AuthService {
     private final UserRepository userRepository;
     private final SessionManager sessionManager;
 
-    /**
-     * @param userRepository user data access
-     * @param sessionManager session lifecycle
-     */
     public AuthService(UserRepository userRepository, SessionManager sessionManager) {
         this.userRepository = userRepository;
         this.sessionManager = sessionManager;
     }
-
-    // ── Operations ────────────────────────────────────────────────────────
 
     /**
      * Authenticates a user and returns a session token on success.
@@ -80,7 +74,7 @@ public class AuthService {
             return LoginResult.failure("Your account has been disabled. Contact an administrator.");
         }
 
-        // Success — create session, record login timestamp
+        // Success - create session, record login timestamp
         UserDto userDto = user.toDto();
         String token = sessionManager.createSession(userDto);
         userRepository.recordLogin(user.getId());
@@ -131,8 +125,6 @@ public class AuthService {
         }
     }
 
-    // ── Result types ──────────────────────────────────────────────────────
-
     /**
      * Result of a login attempt.
      */
@@ -158,16 +150,12 @@ public class AuthService {
             return new LoginResult(false, null, null, message);
         }
 
-        /** @return true if login succeeded */
         public boolean isSuccess() { return success; }
 
-        /** @return session token (non-null only on success) */
         public String getToken() { return token; }
 
-        /** @return authenticated user DTO (non-null only on success) */
         public UserDto getUser() { return user; }
 
-        /** @return error message (non-null only on failure) */
         public String getErrorMessage() { return errorMessage; }
     }
 
@@ -192,10 +180,8 @@ public class AuthService {
             return new ChangePasswordResult(false, message);
         }
 
-        /** @return true if password was changed */
         public boolean isSuccess() { return success; }
 
-        /** @return error message (non-null only on failure) */
         public String getErrorMessage() { return errorMessage; }
     }
 }

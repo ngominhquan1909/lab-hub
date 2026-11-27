@@ -18,10 +18,6 @@ public class ApiException extends Exception {
 
     private final String code;
 
-    /**
-     * @param code    machine-readable error code (e.g. "UNAUTHORIZED", "CONFLICT")
-     * @param message user-safe error description
-     */
     public ApiException(String code, String message) {
         super(message);
         this.code = code;
@@ -36,22 +32,18 @@ public class ApiException extends Exception {
         return code;
     }
 
-    /** @return true if this is an authentication error */
     public boolean isUnauthorized() {
         return "UNAUTHORIZED".equals(code);
     }
 
-    /** @return true if this is a permissions error */
     public boolean isForbidden() {
         return "FORBIDDEN".equals(code);
     }
 
-    /** @return true if a network/transport error occurred */
     public boolean isNetworkError() {
         return "NETWORK_ERROR".equals(code);
     }
 
-    /** @return true if a business-logic conflict occurred */
     public boolean isConflict() {
         return "CONFLICT".equals(code);
     }

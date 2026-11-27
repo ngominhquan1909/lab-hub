@@ -32,14 +32,9 @@ public class BorrowRepository {
 
     private final DatabaseManager db;
 
-    /**
-     * @param db database manager
-     */
     public BorrowRepository(DatabaseManager db) {
         this.db = db;
     }
-
-    // ── Queries ───────────────────────────────────────────────────────────
 
     /**
      * Finds a borrow request by its ID, including all line items.
@@ -116,7 +111,7 @@ public class BorrowRepository {
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
                         BorrowRequestDto dto = mapHeader(rs);
-                        // Load items for each row (N+1 acceptable for page sizes ≤25)
+                        // Load items for each row (N+1 acceptable for page sizes <=25)
                         dto.setItems(findItems(conn, dto.getId()));
                         items.add(dto);
                     }
@@ -150,8 +145,6 @@ public class BorrowRepository {
         }
         return result;
     }
-
-    // ── Mutations ─────────────────────────────────────────────────────────
 
     /**
      * Creates a new borrow request with its equipment line items in a transaction.
@@ -253,12 +246,12 @@ public class BorrowRepository {
     }
 
     /**
-     * Records the physical equipment checkout (APPROVED → ACTIVE).
+     * Records the physical equipment checkout (APPROVED -> ACTIVE).
      * Also records condition at checkout for each item.
      *
      * @param requestId          borrow request ID
      * @param processedBy        manager performing checkout
-     * @param itemConditions     map of equipmentId → condition at checkout
+     * @param itemConditions     map of equipmentId -> condition at checkout
      * @throws SQLException on DB error
      */
     public void checkout(long requestId, long processedBy,
@@ -301,12 +294,12 @@ public class BorrowRepository {
     }
 
     /**
-     * Records the return of all items in a borrow request (ACTIVE/OVERDUE → RETURNED).
+     * Records the return of all items in a borrow request (ACTIVE/OVERDUE -> RETURNED).
      * Also records return conditions for each item.
      *
      * @param requestId      borrow request ID
      * @param processedBy    manager processing the return
-     * @param itemConditions map of equipmentId → condition at return
+     * @param itemConditions map of equipmentId -> condition at return
      * @throws SQLException on DB error
      */
     public void returnRequest(long requestId, long processedBy,
@@ -363,8 +356,6 @@ public class BorrowRepository {
             return ps.executeUpdate();
         }
     }
-
-    // ── Internal ──────────────────────────────────────────────────────────
 
     private List<BorrowItemDto> findItems(Connection conn, long requestId) throws SQLException {
         String sql = "SELECT bi.id, bi.equipment_id, e.name AS equipment_name, e.asset_code, "

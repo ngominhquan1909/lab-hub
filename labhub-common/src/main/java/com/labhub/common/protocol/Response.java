@@ -42,8 +42,6 @@ public class Response {
      */
     private JsonNode payload;
 
-    // ── Static factory helpers ─────────────────────────────────────────────
-
     /**
      * Creates a successful response without a payload.
      *
@@ -91,36 +89,24 @@ public class Response {
         return r;
     }
 
-    // ── Getters / setters ──────────────────────────────────────────────────
-
-    /** @return correlation ID echoed from request */
     public String getRequestId() { return requestId; }
 
-    /** @param requestId correlation ID */
     public void setRequestId(String requestId) { this.requestId = requestId; }
 
-    /** @return true if successful */
     public boolean isSuccess() { return success; }
 
-    /** @param success true if successful */
     public void setSuccess(boolean success) { this.success = success; }
 
-    /** @return machine-readable code */
     public String getCode() { return code; }
 
-    /** @param code machine-readable code */
     public void setCode(String code) { this.code = code; }
 
-    /** @return human-readable message */
     public String getMessage() { return message; }
 
-    /** @param message human-readable message */
     public void setMessage(String message) { this.message = message; }
 
-    /** @return JSON payload node */
     public JsonNode getPayload() { return payload; }
 
-    /** @param payload JSON payload node */
     public void setPayload(JsonNode payload) { this.payload = payload; }
 
     @Override

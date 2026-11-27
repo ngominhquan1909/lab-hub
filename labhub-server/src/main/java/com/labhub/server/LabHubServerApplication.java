@@ -39,7 +39,7 @@ import java.util.concurrent.TimeUnit;
  * <ol>
  *   <li>Load configuration.</li>
  *   <li>Connect to database (fail-fast if unavailable).</li>
- *   <li>Wire repositories → services → handlers → dispatcher.</li>
+ *   <li>Wire repositories -> services -> handlers -> dispatcher.</li>
  *   <li>Register shutdown hook for graceful cleanup.</li>
  *   <li>Start background maintenance tasks.</li>
  *   <li>Start the socket server (blocks until shutdown).</li>
@@ -59,20 +59,20 @@ public class LabHubServerApplication {
     public static void main(String[] args) {
         LOG.info("=== LabHub Server starting ===");
 
-        // ── 1. Configuration ──────────────────────────────────────────────
+        // Configuration
         ServerConfig config = ServerConfig.load(args);
 
-        // ── 2. Database ───────────────────────────────────────────────────
+        // Database
         DatabaseManager db;
         try {
             db = new DatabaseManager(config);
         } catch (IllegalStateException e) {
             LOG.error("FATAL: Cannot connect to database. {}", e.getMessage());
             System.exit(1);
-            return; // unreachable; silences compiler warning
+            return;
         }
 
-        // ── 3. Repositories ───────────────────────────────────────────────
+        // Repositories
         UserRepository        userRepo        = new UserRepository(db);
         LabRepository         labRepo         = new LabRepository(db);
         EquipmentRepository   equipmentRepo   = new EquipmentRepository(db);
@@ -81,15 +81,15 @@ public class LabHubServerApplication {
         MaintenanceRepository maintenanceRepo = new MaintenanceRepository(db);
         DashboardRepository   dashboardRepo   = new DashboardRepository(db);
 
-        // ── 4. Session manager ────────────────────────────────────────────
+        // Session manager
         SessionManager sessionManager = new SessionManager(config.getSessionTimeoutMinutes());
 
-        // ── 5. Services ───────────────────────────────────────────────────
+        // Services
         AuthService    authService    = new AuthService(userRepo, sessionManager);
         BookingService bookingService = new BookingService(bookingRepo, labRepo, dashboardRepo, config);
         BorrowService  borrowService  = new BorrowService(borrowRepo, equipmentRepo, dashboardRepo);
 
-        // ── 6. Handlers ───────────────────────────────────────────────────
+        // Handlers
         AuthHandler        authHandler        = new AuthHandler(authService);
         BookingHandler     bookingHandler     = new BookingHandler(bookingService, bookingRepo);
         BorrowHandler      borrowHandler      = new BorrowHandler(borrowService);
@@ -99,7 +99,7 @@ public class LabHubServerApplication {
         UserHandler        userHandler        = new UserHandler(userRepo, dashboardRepo);
         MaintenanceHandler maintenanceHandler = new MaintenanceHandler(maintenanceRepo, equipmentRepo, dashboardRepo);
 
-        // ── 7. Dispatcher ─────────────────────────────────────────────────
+        // Dispatcher
         RequestDispatcher dispatcher = new RequestDispatcher(sessionManager);
 
         // Auth
@@ -165,10 +165,10 @@ public class LabHubServerApplication {
         dispatcher.register(RequestType.DASHBOARD_ACTIVITY, dashboardHandler);
         dispatcher.register(RequestType.AUDIT_LIST,         dashboardHandler);
 
-        // ── 8. Socket server ──────────────────────────────────────────────
+        // Socket server
         SocketServer server = new SocketServer(config, dispatcher);
 
-        // ── 9. Shutdown hook ──────────────────────────────────────────────
+        // Shutdown hook
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             LOG.info("Shutdown signal received.");
             server.stop();
@@ -176,7 +176,7 @@ public class LabHubServerApplication {
             LOG.info("LabHub Server shut down cleanly.");
         }, "shutdown-hook"));
 
-        // ── 10. Background tasks ──────────────────────────────────────────
+        // Background tasks
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(
                 r -> new Thread(r, "labhub-scheduler"));
 
@@ -195,7 +195,7 @@ public class LabHubServerApplication {
             }
         }, 1, 30, TimeUnit.MINUTES);
 
-        // ── 11. Start ─────────────────────────────────────────────────────
+        // Start
         try {
             LOG.info("=== LabHub Server ready ===");
             server.start(); // blocks until shutdown

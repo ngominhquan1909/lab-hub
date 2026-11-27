@@ -35,7 +35,6 @@ public class AddLabDialogController {
 
     private LabDto createdLab;
 
-    /** @return the created lab, or null if the dialog was cancelled or save failed. */
     public LabDto getCreatedLab() {
         return createdLab;
     }
@@ -86,8 +85,6 @@ public class AddLabDialogController {
         createdLab = null;
         closeDialog();
     }
-
-    // ── Helpers ───────────────────────────────────────────────────────────
 
     private Integer parseIntOrNull(String text) {
         if (text == null || text.isBlank()) {

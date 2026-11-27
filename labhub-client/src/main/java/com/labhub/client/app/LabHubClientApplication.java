@@ -55,7 +55,7 @@ public class LabHubClientApplication extends Application {
         try {
             connection.connect();
         } catch (IOException e) {
-            LOG.error("Failed to connect to server at {}:{} — {}", host, port, e.getMessage());
+            LOG.error("Failed to connect to server at {}:{} - {}", host, port, e.getMessage());
             showConnectionError(host, port, e.getMessage());
             return;
         }
@@ -67,7 +67,7 @@ public class LabHubClientApplication extends Application {
 
         // Setup shutdown on window close
         primaryStage.setOnCloseRequest(event -> {
-            LOG.info("Window closed — cleaning up.");
+            LOG.info("Window closed - cleaning up.");
             AppContext.get().getConnection().close();
             Platform.exit();
         });
@@ -76,8 +76,6 @@ public class LabHubClientApplication extends Application {
         ViewManager.get().showLoginScreen();
         LOG.info("Login screen displayed.");
     }
-
-    // ── Helpers ───────────────────────────────────────────────────────────
 
     private Properties loadClientConfig() {
         Properties props = new Properties();
@@ -101,7 +99,7 @@ public class LabHubClientApplication extends Application {
                 LOG.info("Client config loaded from classpath.");
             }
         } catch (IOException e) {
-            LOG.warn("No client.properties found — using defaults.");
+            LOG.warn("No client.properties found - using defaults.");
         }
         return props;
     }

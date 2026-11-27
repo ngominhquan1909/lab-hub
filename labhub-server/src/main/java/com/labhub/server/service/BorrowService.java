@@ -44,11 +44,6 @@ public class BorrowService {
     private final EquipmentRepository equipmentRepository;
     private final DashboardRepository dashboardRepository;
 
-    /**
-     * @param borrowRepository    borrow request data access
-     * @param equipmentRepository equipment status management
-     * @param dashboardRepository audit logging
-     */
     public BorrowService(BorrowRepository borrowRepository,
                          EquipmentRepository equipmentRepository,
                          DashboardRepository dashboardRepository) {
@@ -56,8 +51,6 @@ public class BorrowService {
         this.equipmentRepository = equipmentRepository;
         this.dashboardRepository = dashboardRepository;
     }
-
-    // ── Queries ───────────────────────────────────────────────────────────
 
     /**
      * Returns paginated borrow requests. Students see only their own; managers see all.
@@ -94,8 +87,6 @@ public class BorrowService {
                 || currentUser.hasRole(UserRole.LAB_MANAGER);
         return (isOwner || isManager) ? req : Optional.empty();
     }
-
-    // ── Mutations ─────────────────────────────────────────────────────────
 
     /**
      * Creates a new equipment borrow request.
@@ -231,7 +222,7 @@ public class BorrowService {
     }
 
     /**
-     * Records physical checkout of equipment (APPROVED → ACTIVE).
+     * Records physical checkout of equipment (APPROVED -> ACTIVE).
      *
      * @param requestId      borrow request ID
      * @param currentUser    manager processing checkout
@@ -260,7 +251,7 @@ public class BorrowService {
     }
 
     /**
-     * Records the return of all equipment in a borrow request (ACTIVE/OVERDUE → RETURNED).
+     * Records the return of all equipment in a borrow request (ACTIVE/OVERDUE -> RETURNED).
      * Also restores equipment status to AVAILABLE.
      *
      * @param requestId      borrow request ID

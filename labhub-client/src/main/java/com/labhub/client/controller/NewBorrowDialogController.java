@@ -51,7 +51,6 @@ public class NewBorrowDialogController implements Initializable {
     private final Map<String, Long> equipmentIdsByLabel = new LinkedHashMap<>();
     private BorrowRequestDto createdRequest;
 
-    /** @return the created borrow request, or null if cancelled or save failed. */
     public BorrowRequestDto getCreatedRequest() {
         return createdRequest;
     }
@@ -158,8 +157,6 @@ public class NewBorrowDialogController implements Initializable {
         createdRequest = null;
         closeDialog();
     }
-
-    // ── Helpers ───────────────────────────────────────────────────────────
 
     private void showError(String message) {
         errorLabel.setText(message);

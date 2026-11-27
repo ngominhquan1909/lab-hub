@@ -5,7 +5,7 @@ package com.labhub.common.enums;
  * Authorization is enforced server-side; client uses roles to hide/show UI elements only.
  */
 public enum UserRole {
-    /** Full access — manages accounts, roles, system configuration, all records. */
+    /** Full access - manages accounts, roles, system configuration, all records. */
     ADMIN,
     /** Manages labs, equipment, approvals, maintenance workflows, and operational records. */
     LAB_MANAGER,

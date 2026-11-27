@@ -36,16 +36,10 @@ public class SocketServer {
     private ServerSocket serverSocket;
     private ExecutorService executor;
 
-    /**
-     * @param config     server configuration (host, port, thread count)
-     * @param dispatcher routes requests to handlers
-     */
     public SocketServer(ServerConfig config, RequestDispatcher dispatcher) {
         this.config = config;
         this.dispatcher = dispatcher;
     }
-
-    // ── Lifecycle ─────────────────────────────────────────────────────────
 
     /**
      * Starts the server and blocks until {@link #stop()} is called.
@@ -74,7 +68,7 @@ public class SocketServer {
      * Signals the server to stop and waits for active connections to finish.
      */
     public void stop() {
-        LOG.info("Shutting down LabHub server…");
+        LOG.info("Shutting down LabHub server...");
         running = false;
 
         // Close server socket to unblock accept()
@@ -102,21 +96,18 @@ public class SocketServer {
         LOG.info("Server shutdown complete.");
     }
 
-    // ── Accept loop ───────────────────────────────────────────────────────
-
     private void acceptLoop() {
         while (running) {
             try {
                 Socket clientSocket = serverSocket.accept();
-                // Set a read timeout so idle clients don't hold threads indefinitely
-                clientSocket.setSoTimeout(0); // 0 = no timeout for persistent connections
+                clientSocket.setSoTimeout(0); // no read timeout: connections are persistent
                 executor.submit(new ClientHandler(clientSocket, dispatcher));
             } catch (SocketException e) {
                 if (running) {
                     // Unexpected socket error while still running
                     LOG.error("Server socket error: {}", e.getMessage(), e);
                 }
-                // If !running, this is the expected close — exit the loop silently
+                // If !running, this is the expected close - exit the loop silently
             } catch (IOException e) {
                 if (running) {
                     LOG.warn("Failed to accept client connection: {}", e.getMessage());

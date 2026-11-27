@@ -10,9 +10,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
  *
  * <p>Configuration:
  * <ul>
- *   <li>JavaTimeModule registered — {@code LocalDate} / {@code LocalDateTime} serialized as ISO strings.</li>
- *   <li>WRITE_DATES_AS_TIMESTAMPS disabled — dates are human-readable, not epoch numbers.</li>
- *   <li>FAIL_ON_UNKNOWN_PROPERTIES disabled — forward/backward protocol compatibility.</li>
+ *   <li>JavaTimeModule registered - {@code LocalDate} / {@code LocalDateTime} serialized as ISO strings.</li>
+ *   <li>WRITE_DATES_AS_TIMESTAMPS disabled - dates are human-readable, not epoch numbers.</li>
+ *   <li>FAIL_ON_UNKNOWN_PROPERTIES disabled - forward/backward protocol compatibility.</li>
  * </ul>
  */
 public final class JsonMapper {
@@ -35,7 +35,7 @@ public final class JsonMapper {
         // Serialize LocalDate, LocalDateTime as ISO-8601 strings
         mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        // Tolerate unknown fields — allows server/client to evolve independently
+        // Tolerate unknown fields - allows server/client to evolve independently
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         return mapper;
     }

@@ -80,8 +80,6 @@ public class MainController implements Initializable {
         navigateTo(navDashboard, "Dashboard", "", "DashboardView.fxml");
     }
 
-    // ── Navigation handler ────────────────────────────────────────────────
-
     @FXML
     private void onNav(javafx.event.ActionEvent event) {
         Button btn = (Button) event.getSource();
@@ -104,8 +102,6 @@ public class MainController implements Initializable {
         }
     }
 
-    // ── Logout ────────────────────────────────────────────────────────────
-
     @FXML
     private void onLogout() {
         // Invalidate session on server (best-effort)
@@ -122,8 +118,6 @@ public class MainController implements Initializable {
             }
         });
     }
-
-    // ── Helpers ───────────────────────────────────────────────────────────
 
     /**
      * Swaps the content area and updates the active nav button state.

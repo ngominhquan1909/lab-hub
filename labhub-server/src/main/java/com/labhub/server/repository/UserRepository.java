@@ -32,14 +32,9 @@ public class UserRepository {
 
     private final DatabaseManager db;
 
-    /**
-     * @param db database manager providing pooled connections
-     */
     public UserRepository(DatabaseManager db) {
         this.db = db;
     }
-
-    // ── Queries ───────────────────────────────────────────────────────────
 
     /**
      * Finds a user by username. Used during login.
@@ -154,8 +149,6 @@ public class UserRepository {
             return new PagedResult<>(List.of(), page, pageSize, 0);
         }
     }
-
-    // ── Mutations ─────────────────────────────────────────────────────────
 
     /**
      * Creates a new user account and assigns roles within a single transaction.
@@ -284,8 +277,6 @@ public class UserRepository {
             LOG.warn("Failed to record login for user {}: {}", id, e.getMessage());
         }
     }
-
-    // ── Internal helpers ──────────────────────────────────────────────────
 
     private List<UserRole> findRoles(Connection conn, long userId) throws SQLException {
         String sql = "SELECT r.name FROM roles r "

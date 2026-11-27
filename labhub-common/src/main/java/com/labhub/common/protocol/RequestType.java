@@ -6,12 +6,12 @@ package com.labhub.common.protocol;
  */
 public enum RequestType {
 
-    // ── Authentication ─────────────────────────────────────────────────────
+    // Authentication
     LOGIN,
     LOGOUT,
     CHANGE_PASSWORD,
 
-    // ── Users (admin only) ─────────────────────────────────────────────────
+    // Users (admin only)
     USER_LIST,
     USER_GET,
     USER_CREATE,
@@ -19,18 +19,18 @@ public enum RequestType {
     USER_DISABLE,
     USER_ENABLE,
 
-    // ── Laboratories ───────────────────────────────────────────────────────
+    // Laboratories
     LAB_LIST,
     LAB_GET,
     LAB_CREATE,
     LAB_UPDATE,
     LAB_DEACTIVATE,
 
-    // ── Equipment categories ───────────────────────────────────────────────
+    // Equipment categories
     CATEGORY_LIST,
     CATEGORY_CREATE,
 
-    // ── Equipment ──────────────────────────────────────────────────────────
+    // Equipment
     EQUIPMENT_LIST,
     EQUIPMENT_GET,
     EQUIPMENT_CREATE,
@@ -38,7 +38,7 @@ public enum RequestType {
     EQUIPMENT_DEACTIVATE,
     EQUIPMENT_HISTORY,
 
-    // ── Bookings ───────────────────────────────────────────────────────────
+    // Bookings
     BOOKING_LIST,
     BOOKING_GET,
     BOOKING_CREATE,
@@ -47,7 +47,7 @@ public enum RequestType {
     BOOKING_CANCEL,
     BOOKING_SCHEDULE,
 
-    // ── Borrow requests ────────────────────────────────────────────────────
+    // Borrow requests
     BORROW_LIST,
     BORROW_GET,
     BORROW_CREATE,
@@ -57,7 +57,7 @@ public enum RequestType {
     BORROW_RETURN,
     BORROW_CANCEL,
 
-    // ── Maintenance ────────────────────────────────────────────────────────
+    // Maintenance
     MAINTENANCE_LIST,
     MAINTENANCE_GET,
     MAINTENANCE_CREATE,
@@ -66,11 +66,11 @@ public enum RequestType {
     MAINTENANCE_RESOLVE,
     MAINTENANCE_CLOSE,
 
-    // ── Dashboard ──────────────────────────────────────────────────────────
+    // Dashboard
     DASHBOARD_STATS,
     DASHBOARD_ACTIVITY,
     DASHBOARD_TODAY_BOOKINGS,
 
-    // ── Audit ──────────────────────────────────────────────────────────────
+    // Audit
     AUDIT_LIST
 }

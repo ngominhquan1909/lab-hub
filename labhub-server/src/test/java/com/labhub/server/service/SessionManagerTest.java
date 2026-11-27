@@ -31,7 +31,7 @@ class SessionManagerTest {
     }
 
     @Test
-    @DisplayName("Create session → returns non-null token")
+    @DisplayName("Create session -> returns non-null token")
     void createSession_returnsToken() {
         String token = sessionManager.createSession(testUser);
         assertNotNull(token);
@@ -39,7 +39,7 @@ class SessionManagerTest {
     }
 
     @Test
-    @DisplayName("Valid token → resolves to correct user")
+    @DisplayName("Valid token -> resolves to correct user")
     void validateToken_validToken_returnsUser() {
         String token = sessionManager.createSession(testUser);
         Optional<UserDto> result = sessionManager.validateToken(token);
@@ -48,20 +48,20 @@ class SessionManagerTest {
     }
 
     @Test
-    @DisplayName("Invalid token → empty optional")
+    @DisplayName("Invalid token -> empty optional")
     void validateToken_invalidToken_empty() {
         Optional<UserDto> result = sessionManager.validateToken("not-a-real-token");
         assertFalse(result.isPresent());
     }
 
     @Test
-    @DisplayName("Null token → empty optional (does not throw)")
+    @DisplayName("Null token -> empty optional (does not throw)")
     void validateToken_null_empty() {
         assertFalse(sessionManager.validateToken(null).isPresent());
     }
 
     @Test
-    @DisplayName("Invalidated token → empty optional")
+    @DisplayName("Invalidated token -> empty optional")
     void invalidate_tokenBecomesInvalid() {
         String token = sessionManager.createSession(testUser);
         sessionManager.invalidate(token);
@@ -69,7 +69,7 @@ class SessionManagerTest {
     }
 
     @Test
-    @DisplayName("Two logins → two distinct tokens both valid")
+    @DisplayName("Two logins -> two distinct tokens both valid")
     void createSession_twoLogins_twoDistinctValidTokens() {
         String t1 = sessionManager.createSession(testUser);
         String t2 = sessionManager.createSession(testUser);

@@ -49,7 +49,6 @@ public class NewBookingDialogController implements Initializable {
     private final Map<String, Long> labIdsByName = new LinkedHashMap<>();
     private BookingDto createdBooking;
 
-    /** @return the created booking, or null if cancelled or save failed. */
     public BookingDto getCreatedBooking() {
         return createdBooking;
     }
@@ -141,8 +140,6 @@ public class NewBookingDialogController implements Initializable {
         createdBooking = null;
         closeDialog();
     }
-
-    // ── Helpers ───────────────────────────────────────────────────────────
 
     private void showError(String message) {
         errorLabel.setText(message);

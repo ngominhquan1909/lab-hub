@@ -20,11 +20,11 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * Manages a single persistent TCP connection to the LabHub server.
  *
- * <p>Protocol: newline-delimited JSON — one JSON object per line, UTF-8.
+ * <p>Protocol: newline-delimited JSON - one JSON object per line, UTF-8.
  *
  * <p>Thread safety: {@link #send(Request)} acquires a lock so multiple JavaFX
  * background tasks can share the connection safely. The lock ensures that one
- * complete request→response cycle completes before another starts on the same
+ * complete request->response cycle completes before another starts on the same
  * socket. For true multiplexing, each call could open its own connection, but
  * this is unnecessary given the interaction patterns of a desktop app.
  *
@@ -47,20 +47,12 @@ public class ServerConnection implements AutoCloseable {
     private final ReentrantLock lock = new ReentrantLock();
     private volatile boolean connected = false;
 
-    /**
-     * @param host             server hostname
-     * @param port             server port
-     * @param connectTimeoutMs connection timeout in milliseconds
-     * @param readTimeoutMs    read timeout in milliseconds
-     */
     public ServerConnection(String host, int port, int connectTimeoutMs, int readTimeoutMs) {
         this.host = host;
         this.port = port;
         this.connectTimeoutMs = connectTimeoutMs;
         this.readTimeoutMs = readTimeoutMs;
     }
-
-    // ── Lifecycle ─────────────────────────────────────────────────────────
 
     /**
      * Opens the TCP connection to the server.
@@ -95,12 +87,9 @@ public class ServerConnection implements AutoCloseable {
         LOG.info("Disconnected from server.");
     }
 
-    /** @return true if the connection is currently open */
     public boolean isConnected() {
         return connected && socket != null && !socket.isClosed();
     }
-
-    // ── Request/response ──────────────────────────────────────────────────
 
     /**
      * Sends a request to the server and waits for the response.
@@ -124,7 +113,7 @@ public class ServerConnection implements AutoCloseable {
             writer.write(requestJson);
             writer.newLine();
             writer.flush();
-            LOG.debug("→ {}", request);
+            LOG.debug("-> {}", request);
 
             // Read one line = one complete JSON response
             String responseLine = reader.readLine();
@@ -133,18 +122,14 @@ public class ServerConnection implements AutoCloseable {
                 throw new IOException("Server closed the connection.");
             }
             Response response = MAPPER.readValue(responseLine, Response.class);
-            LOG.debug("← {}", response);
+            LOG.debug("<- {}", response);
             return response;
         } finally {
             lock.unlock();
         }
     }
 
-    // ── Accessors ─────────────────────────────────────────────────────────
-
-    /** @return server hostname */
     public String getHost() { return host; }
 
-    /** @return server port */
     public int getPort() { return port; }
 }

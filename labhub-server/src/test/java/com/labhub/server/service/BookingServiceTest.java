@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for {@link BookingService} business logic.
- * Uses Mockito-style stubs without the Mockito library — relies on anonymous classes
+ * Uses Mockito-style stubs without the Mockito library - relies on anonymous classes
  * for compatibility with the project's dependency set.
  *
  * <p>Tests cover:
@@ -44,7 +44,7 @@ import static org.mockito.Mockito.*;
  */
 class BookingServiceTest {
 
-    // ── Fakes ──────────────────────────────────────────────────────────────
+    // Fakes
 
     private static class FakeBookingRepository extends BookingRepository {
         private boolean conflictResult = false;
@@ -124,7 +124,7 @@ class BookingServiceTest {
         public int getBookingMaxAdvanceDays() { return 90; }
     }
 
-    // ── Test setup ─────────────────────────────────────────────────────────
+    // Test setup
 
     private FakeBookingRepository bookingRepo;
     private LabDto activeLab;
@@ -151,10 +151,10 @@ class BookingServiceTest {
         lecturer.setRoles(List.of(UserRole.LECTURER));
     }
 
-    // ── Validation tests ───────────────────────────────────────────────────
+    // Validation tests
 
     @Test
-    @DisplayName("Start time in the past → rejected")
+    @DisplayName("Start time in the past -> rejected")
     void create_startTimeInPast_rejected() {
         BookingDto dto = booking(LocalDateTime.now().minusHours(1),
                 LocalDateTime.now().plusHours(1));
@@ -164,7 +164,7 @@ class BookingServiceTest {
     }
 
     @Test
-    @DisplayName("End time before start time → rejected")
+    @DisplayName("End time before start time -> rejected")
     void create_endBeforeStart_rejected() {
         BookingDto dto = booking(LocalDateTime.now().plusHours(2),
                 LocalDateTime.now().plusHours(1));
@@ -174,7 +174,7 @@ class BookingServiceTest {
     }
 
     @Test
-    @DisplayName("Duration below minimum → rejected")
+    @DisplayName("Duration below minimum -> rejected")
     void create_durationBelowMinimum_rejected() {
         // 20 minutes, minimum is 30
         BookingDto dto = booking(LocalDateTime.now().plusHours(1),
@@ -185,7 +185,7 @@ class BookingServiceTest {
     }
 
     @Test
-    @DisplayName("INACTIVE lab → rejected")
+    @DisplayName("INACTIVE lab -> rejected")
     void create_inactiveLab_rejected() {
         activeLab.setStatus(LabStatus.INACTIVE);
         BookingDto dto = validBooking();
@@ -195,7 +195,7 @@ class BookingServiceTest {
     }
 
     @Test
-    @DisplayName("Attendee count exceeds capacity → rejected")
+    @DisplayName("Attendee count exceeds capacity -> rejected")
     void create_attendeesExceedCapacity_rejected() {
         BookingDto dto = validBooking();
         dto.setAttendeeCount(100); // lab capacity is 40
@@ -205,7 +205,7 @@ class BookingServiceTest {
     }
 
     @Test
-    @DisplayName("Conflicting approved booking → rejected")
+    @DisplayName("Conflicting approved booking -> rejected")
     void create_conflictingBooking_rejected() {
         bookingRepo.conflictResult = true;
         ServiceResult<BookingDto> result = service.create(validBooking(), lecturer);
@@ -214,7 +214,7 @@ class BookingServiceTest {
     }
 
     @Test
-    @DisplayName("Valid booking with no conflict → accepted")
+    @DisplayName("Valid booking with no conflict -> accepted")
     void create_validBooking_accepted() {
         bookingRepo.conflictResult = false;
         ServiceResult<BookingDto> result = service.create(validBooking(), lecturer);
@@ -223,10 +223,10 @@ class BookingServiceTest {
         assertEquals(BookingStatus.PENDING, result.getData().getStatus());
     }
 
-    // ── Approval tests ─────────────────────────────────────────────────────
+    // Approval tests
 
     @Test
-    @DisplayName("Approve PENDING booking → success")
+    @DisplayName("Approve PENDING booking -> success")
     void approve_pendingBooking_succeeds() {
         // Create then approve
         service.create(validBooking(), lecturer);
@@ -237,7 +237,7 @@ class BookingServiceTest {
     }
 
     @Test
-    @DisplayName("Approve already-APPROVED booking → rejected")
+    @DisplayName("Approve already-APPROVED booking -> rejected")
     void approve_alreadyApproved_rejected() {
         service.create(validBooking(), lecturer);
         UserDto manager = manager();
@@ -248,10 +248,10 @@ class BookingServiceTest {
         assertTrue(result.getErrorMessage().contains("PENDING"));
     }
 
-    // ── Rejection tests ────────────────────────────────────────────────────
+    // Rejection tests
 
     @Test
-    @DisplayName("Reject without note → validation error")
+    @DisplayName("Reject without note -> validation error")
     void reject_missingNote_rejected() {
         service.create(validBooking(), lecturer);
         ServiceResult<BookingDto> result = service.reject(1L, manager(), null);
@@ -260,7 +260,7 @@ class BookingServiceTest {
     }
 
     @Test
-    @DisplayName("Reject PENDING booking with note → success")
+    @DisplayName("Reject PENDING booking with note -> success")
     void reject_pendingWithNote_succeeds() {
         service.create(validBooking(), lecturer);
         ServiceResult<BookingDto> result = service.reject(1L, manager(), "Lab under maintenance.");
@@ -268,10 +268,10 @@ class BookingServiceTest {
         assertEquals(BookingStatus.REJECTED, result.getData().getStatus());
     }
 
-    // ── Cancellation tests ─────────────────────────────────────────────────
+    // Cancellation tests
 
     @Test
-    @DisplayName("Owner cancels own booking → success")
+    @DisplayName("Owner cancels own booking -> success")
     void cancel_byOwner_succeeds() {
         service.create(validBooking(), lecturer);
         ServiceResult<Void> result = service.cancel(1L, lecturer);
@@ -291,14 +291,14 @@ class BookingServiceTest {
     }
 
     @Test
-    @DisplayName("Manager cancels any booking → success")
+    @DisplayName("Manager cancels any booking -> success")
     void cancel_byManager_succeeds() {
         service.create(validBooking(), lecturer);
         ServiceResult<Void> result = service.cancel(1L, manager());
         assertTrue(result.isSuccess());
     }
 
-    // ── Helpers ────────────────────────────────────────────────────────────
+    // Helpers
 
     private BookingDto booking(LocalDateTime start, LocalDateTime end) {
         BookingDto dto = new BookingDto();

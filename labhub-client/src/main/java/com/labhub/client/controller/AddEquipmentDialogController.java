@@ -51,7 +51,6 @@ public class AddEquipmentDialogController implements Initializable {
 
     private EquipmentDto createdEquipment;
 
-    /** @return the created equipment, or null if cancelled or save failed. */
     public EquipmentDto getCreatedEquipment() {
         return createdEquipment;
     }
@@ -159,8 +158,6 @@ public class AddEquipmentDialogController implements Initializable {
         createdEquipment = null;
         closeDialog();
     }
-
-    // ── Helpers ───────────────────────────────────────────────────────────
 
     private String textOf(TextField field) {
         return field.getText() == null ? "" : field.getText().trim();

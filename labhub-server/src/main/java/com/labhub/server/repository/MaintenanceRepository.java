@@ -30,14 +30,9 @@ public class MaintenanceRepository {
 
     private final DatabaseManager db;
 
-    /**
-     * @param db database manager
-     */
     public MaintenanceRepository(DatabaseManager db) {
         this.db = db;
     }
-
-    // ── Queries ───────────────────────────────────────────────────────────
 
     /**
      * Finds a maintenance ticket by its ID.
@@ -130,8 +125,6 @@ public class MaintenanceRepository {
             return new PagedResult<>(List.of(), page, pageSize, 0);
         }
     }
-
-    // ── Mutations ─────────────────────────────────────────────────────────
 
     /**
      * Creates a new maintenance ticket in OPEN status.
@@ -242,8 +235,6 @@ public class MaintenanceRepository {
             }
         }
     }
-
-    // ── Internal ──────────────────────────────────────────────────────────
 
     private String baseSql() {
         return "SELECT mt.id, mt.equipment_id, e.name AS equipment_name, e.asset_code, "

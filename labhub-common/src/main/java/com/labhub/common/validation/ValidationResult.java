@@ -12,8 +12,6 @@ public class ValidationResult {
     private final List<FieldError> fieldErrors = new ArrayList<>();
     private final List<String> globalErrors = new ArrayList<>();
 
-    // ── Building ──────────────────────────────────────────────────────────
-
     /**
      * Adds a field-level error.
      *
@@ -36,8 +34,6 @@ public class ValidationResult {
         globalErrors.add(message);
         return this;
     }
-
-    // ── Query ─────────────────────────────────────────────────────────────
 
     /**
      * Returns true if no errors have been recorded.
@@ -85,8 +81,6 @@ public class ValidationResult {
         return total + " validation errors. Please review the highlighted fields.";
     }
 
-    // ── Inner type ────────────────────────────────────────────────────────
-
     /**
      * A single field-level validation error.
      */
@@ -95,19 +89,13 @@ public class ValidationResult {
         private final String field;
         private final String message;
 
-        /**
-         * @param field   field name
-         * @param message error message
-         */
         public FieldError(String field, String message) {
             this.field = field;
             this.message = message;
         }
 
-        /** @return field name */
         public String getField() { return field; }
 
-        /** @return error message */
         public String getMessage() { return message; }
     }
 }

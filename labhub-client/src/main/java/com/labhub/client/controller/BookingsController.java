@@ -69,8 +69,6 @@ public class BookingsController implements Initializable {
         loadPage(1);
     }
 
-    // ── Event handlers ────────────────────────────────────────────────────
-
     @FXML
     private void onFilter() { loadPage(1); }
 
@@ -99,8 +97,6 @@ public class BookingsController implements Initializable {
 
     @FXML
     private void onNextPage() { if (currentPage < totalPages) loadPage(currentPage + 1); }
-
-    // ── Data loading ──────────────────────────────────────────────────────
 
     private void loadPage(int page) {
         setLoading(true);
@@ -143,8 +139,6 @@ public class BookingsController implements Initializable {
         nextBtn.setDisable(page >= totalPages);
     }
 
-    // ── Table setup ───────────────────────────────────────────────────────
-
     private void setupTable() {
         colLab.setCellValueFactory(c ->
                 new SimpleStringProperty(c.getValue().getLabName() + "\n"
@@ -166,7 +160,7 @@ public class BookingsController implements Initializable {
                 new SimpleStringProperty(c.getValue().getStatus() != null
                         ? c.getValue().getStatus().name() : "—"));
 
-        // Actions column — approve/reject for managers, cancel for owners
+        // Actions column - approve/reject for managers, cancel for owners
         colActions.setCellFactory(col -> new TableCell<>() {
             private final Button approveBtn = new Button("Approve");
             private final Button rejectBtn  = new Button("Reject");

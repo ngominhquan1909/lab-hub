@@ -26,9 +26,6 @@ public class BorrowHandler extends BaseHandler {
 
     private final BorrowService borrowService;
 
-    /**
-     * @param borrowService borrow business logic
-     */
     public BorrowHandler(BorrowService borrowService) {
         this.borrowService = borrowService;
     }
@@ -48,8 +45,6 @@ public class BorrowHandler extends BaseHandler {
                     "BorrowHandler does not handle " + request.getType());
         };
     }
-
-    // ── Handlers ──────────────────────────────────────────────────────────
 
     private Response handleList(Request request, UserDto currentUser) {
         JsonNode p = request.getPayload();
@@ -177,7 +172,7 @@ public class BorrowHandler extends BaseHandler {
     }
 
     private Response handleCancel(Request request, UserDto currentUser) {
-        // Cancellation allowed by requester or manager — business logic enforces scope
+        // Cancellation allowed by requester or manager - business logic enforces scope
         long id = longOrDefault(request.getPayload(), "id", 0);
         if (id <= 0) {
             return Response.error(request.getRequestId(), "VALIDATION_ERROR", "Request ID required.");
@@ -189,10 +184,8 @@ public class BorrowHandler extends BaseHandler {
                 : Response.error(request.getRequestId(), "CONFLICT", result.getErrorMessage());
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────
-
     /**
-     * Parses a map of equipmentId → EquipmentCondition from a JSON object field.
+     * Parses a map of equipmentId -> EquipmentCondition from a JSON object field.
      *
      * @param payload   parent node
      * @param fieldName field containing the map

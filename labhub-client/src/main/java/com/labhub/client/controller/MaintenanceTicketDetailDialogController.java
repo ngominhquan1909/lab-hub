@@ -60,7 +60,6 @@ public class MaintenanceTicketDetailDialogController {
     private MaintenanceTicketDto ticket;
     private boolean changed = false;
 
-    /** @return true if the ticket was assigned, resolved, or closed during this dialog session. */
     public boolean wasChanged() {
         return changed;
     }
@@ -208,8 +207,6 @@ public class MaintenanceTicketDetailDialogController {
     private void onDone() {
         closeDialog();
     }
-
-    // ── Helpers ───────────────────────────────────────────────────────────
 
     private void setVisible(javafx.scene.Node node, boolean visible) {
         node.setVisible(visible);

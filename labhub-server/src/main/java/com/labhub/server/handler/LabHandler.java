@@ -25,10 +25,6 @@ public class LabHandler extends BaseHandler {
     private final LabRepository labRepository;
     private final DashboardRepository dashboardRepository;
 
-    /**
-     * @param labRepository      lab data access
-     * @param dashboardRepository audit logging
-     */
     public LabHandler(LabRepository labRepository, DashboardRepository dashboardRepository) {
         this.labRepository = labRepository;
         this.dashboardRepository = dashboardRepository;
@@ -46,8 +42,6 @@ public class LabHandler extends BaseHandler {
                     "LabHandler does not handle " + request.getType());
         };
     }
-
-    // ── Handlers ──────────────────────────────────────────────────────────
 
     private Response handleList(Request request, UserDto currentUser) {
         int page     = intOrDefault(request.getPayload(), "page",     1);

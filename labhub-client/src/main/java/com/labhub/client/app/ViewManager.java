@@ -50,12 +50,9 @@ public final class ViewManager {
         this.primaryStage = stage;
     }
 
-    /** @return the application's primary stage */
     public Stage getPrimaryStage() {
         return primaryStage;
     }
-
-    // ── Navigation ────────────────────────────────────────────────────────
 
     /**
      * Displays the login screen (replaces the current scene).
@@ -146,8 +143,6 @@ public final class ViewManager {
             return null;
         }
     }
-
-    // ── Internal ──────────────────────────────────────────────────────────
 
     private void loadScene(String fxmlName, String title, double width, double height) {
         try {

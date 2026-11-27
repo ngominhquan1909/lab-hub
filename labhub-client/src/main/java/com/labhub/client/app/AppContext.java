@@ -33,8 +33,6 @@ public final class AppContext {
         return INSTANCE;
     }
 
-    // ── Session ───────────────────────────────────────────────────────────
-
     /**
      * Returns the authenticated user, or null if not logged in.
      *
@@ -49,7 +47,6 @@ public final class AppContext {
      */
     public void setCurrentUser(UserDto user) { this.currentUser = user; }
 
-    /** @return true if a user is logged in */
     public boolean isLoggedIn() { return currentUser != null; }
 
     /**
@@ -58,8 +55,6 @@ public final class AppContext {
     public void clearSession() {
         currentUser = null;
     }
-
-    // ── Authorization helpers ─────────────────────────────────────────────
 
     /**
      * Returns true if the current user has the ADMIN role.
@@ -89,8 +84,6 @@ public final class AppContext {
         return currentUser != null && currentUser.getRoles() != null
                 && currentUser.getRoles().contains(role);
     }
-
-    // ── Networking ────────────────────────────────────────────────────────
 
     /**
      * Returns the shared API client.

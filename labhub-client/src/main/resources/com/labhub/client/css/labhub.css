@@ -1,9 +1,9 @@
 /* ================================================================
-   LabHub — Design System Stylesheet
+   LabHub - Design System Stylesheet
    Color palette: warm paper editorial, restrained vermilion accent.
    ================================================================ */
 
-/* ── Design tokens ──────────────────────────────────────────────── */
+/* Design tokens */
 .root {
     /* Surfaces */
     -lh-bg:          #F5F4EF;
@@ -50,10 +50,10 @@
     -fx-background-color: #F5F4EF;
 }
 
-/* ── Base text ──────────────────────────────────────────────────── */
+/* Base text */
 .label { -fx-text-fill: #202426; }
 
-/* ── Sidebar ────────────────────────────────────────────────────── */
+/* Sidebar */
 .sidebar {
     -fx-background-color: #1F2426;
     -fx-min-width: 220px;
@@ -121,7 +121,7 @@
     -fx-font-size: 11px;
 }
 
-/* ── Top bar ────────────────────────────────────────────────────── */
+/* Top bar */
 .topbar {
     -fx-background-color: #F5F4EF;
     -fx-border-color: #D5DADF;
@@ -140,7 +140,7 @@
     -fx-text-fill: #657078;
 }
 
-/* ── Content area ───────────────────────────────────────────────── */
+/* Content area */
 .content-area {
     -fx-background-color: #F5F4EF;
     -fx-padding: 24;
@@ -151,7 +151,7 @@
 }
 .content-scroll .viewport { -fx-background-color: transparent; }
 
-/* ── Stat cards ─────────────────────────────────────────────────── */
+/* Stat cards */
 .stat-card {
     -fx-background-color: #EDECE7;
     -fx-border-color: #D5DADF;
@@ -175,7 +175,7 @@
 .stat-card-danger  { -fx-background-color: #FAEAEA; -fx-border-color: #E0A0A0; }
 .stat-card-success { -fx-background-color: #E8F4EA; -fx-border-color: #9FC9A4; }
 
-/* ── Buttons ────────────────────────────────────────────────────── */
+/* Buttons */
 .btn-primary {
     -fx-background-color: #C65336;
     -fx-text-fill: white;
@@ -237,7 +237,7 @@
 }
 .btn-success:hover { -fx-background-color: #2F6637; }
 
-/* ── Form fields ────────────────────────────────────────────────── */
+/* Form fields */
 .field-label {
     -fx-font-size: 11px;
     -fx-font-weight: bold;
@@ -276,7 +276,7 @@
     -fx-border-width: 0 0 1 0;
 }
 
-/* ── Tables ─────────────────────────────────────────────────────── */
+/* Tables */
 .table-view {
     -fx-background-color: white;
     -fx-border-color: #D5DADF;
@@ -319,7 +319,7 @@
     -fx-text-fill: #657078;
 }
 
-/* ── Status badges ──────────────────────────────────────────────── */
+/* Status badges */
 .badge {
     -fx-padding: 2 8;
     -fx-background-radius: 2px;
@@ -336,7 +336,7 @@
 .badge-available { -fx-background-color: #E8F4EA; -fx-text-fill: #3A7D44; }
 .badge-borrowed  { -fx-background-color: #E6F0FB; -fx-text-fill: #2563A0; }
 
-/* ── Section headers ────────────────────────────────────────────── */
+/* Section headers */
 .section-header {
     -fx-padding: 0 0 12 0;
     -fx-border-color: #D5DADF;
@@ -352,7 +352,7 @@
     -fx-text-fill: #657078;
 }
 
-/* ── Toolbar ────────────────────────────────────────────────────── */
+/* Toolbar */
 .toolbar {
     -fx-padding: 12 0;
     -fx-border-color: transparent transparent #D5DADF transparent;
@@ -373,7 +373,7 @@
     -fx-border-width: 1;
 }
 
-/* ── Login screen ───────────────────────────────────────────────── */
+/* Login screen */
 .login-panel {
     -fx-background-color: white;
     -fx-border-color: #D5DADF;
@@ -406,7 +406,7 @@
     -fx-font-size: 13px;
 }
 
-/* ── Pagination ─────────────────────────────────────────────────── */
+/* Pagination */
 .pagination {
     -fx-page-information-visible: false;
 }
@@ -421,7 +421,7 @@
 }
 .pagination .button:hover { -fx-background-color: #EAE9E3; }
 
-/* ── Detail pane ────────────────────────────────────────────────── */
+/* Detail pane */
 .detail-panel {
     -fx-background-color: white;
     -fx-border-color: #D5DADF;
@@ -451,7 +451,7 @@
     -fx-max-height: 1px;
 }
 
-/* ── Empty state ────────────────────────────────────────────────── */
+/* Empty state */
 .empty-state-box {
     -fx-padding: 48;
     -fx-alignment: center;
@@ -466,7 +466,7 @@
     -fx-text-fill: #A0A8B0;
 }
 
-/* ── Scrollbar ──────────────────────────────────────────────────── */
+/* Scrollbar */
 .scroll-bar .thumb {
     -fx-background-color: #C8C6BE;
     -fx-background-radius: 2px;
@@ -479,10 +479,10 @@
 .scroll-bar .increment-arrow,
 .scroll-bar .decrement-arrow  { -fx-shape: " "; -fx-padding: 0; }
 
-/* ── Separator ──────────────────────────────────────────────────── */
+/* Separator */
 .separator .line { -fx-border-color: #D5DADF; }
 
-/* ── Tooltip ────────────────────────────────────────────────────── */
+/* Tooltip */
 .tooltip {
     -fx-background-color: #202426;
     -fx-text-fill: white;
@@ -491,7 +491,7 @@
     -fx-background-radius: 4px;
 }
 
-/* ── Progress indicator ─────────────────────────────────────────── */
+/* Progress indicator */
 .progress-indicator { -fx-progress-color: #C65336; }
 .progress-bar .track { -fx-background-color: #EAE9E3; }
 .progress-bar .bar   { -fx-background-color: #C65336; }

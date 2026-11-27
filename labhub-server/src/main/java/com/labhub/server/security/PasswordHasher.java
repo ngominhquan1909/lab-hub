@@ -6,7 +6,7 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
  * Provides BCrypt password hashing and verification.
  *
  * <p>Algorithm: BCrypt (at.favre.lib:bcrypt:0.10.2)
- * Cost factor: 12 — provides ~300ms hashing time on modern hardware,
+ * Cost factor: 12 - provides ~300ms hashing time on modern hardware,
  * appropriate for a university application. Increase for production.
  *
  * <p>Plaintext passwords MUST NOT be stored or logged anywhere.

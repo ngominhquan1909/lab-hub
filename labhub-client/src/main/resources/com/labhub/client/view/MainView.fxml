@@ -7,7 +7,7 @@
             fx:controller="com.labhub.client.controller.MainController"
             style="-fx-background-color: #F5F4EF;">
 
-    <!-- ── LEFT — Sidebar ── -->
+    <!-- LEFT - Sidebar -->
     <left>
         <VBox styleClass="sidebar">
 
@@ -69,7 +69,7 @@
         </VBox>
     </left>
 
-    <!-- ── CENTER — Dynamic content ── -->
+    <!-- CENTER - Dynamic content -->
     <center>
         <VBox>
             <!-- Top bar with page title -->

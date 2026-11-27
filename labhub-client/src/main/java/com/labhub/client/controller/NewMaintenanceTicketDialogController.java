@@ -40,7 +40,6 @@ public class NewMaintenanceTicketDialogController implements Initializable {
     private final Map<String, Long> equipmentIdsByLabel = new LinkedHashMap<>();
     private MaintenanceTicketDto createdTicket;
 
-    /** @return the created ticket, or null if cancelled or save failed. */
     public MaintenanceTicketDto getCreatedTicket() {
         return createdTicket;
     }
@@ -116,8 +115,6 @@ public class NewMaintenanceTicketDialogController implements Initializable {
         createdTicket = null;
         closeDialog();
     }
-
-    // ── Helpers ───────────────────────────────────────────────────────────
 
     private void showError(String message) {
         errorLabel.setText(message);

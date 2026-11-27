@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.JsonNode;
  * Envelope for every client-to-server message.
  *
  * <p>Wire format: a single JSON object on one UTF-8 line, terminated by {@code \n}.
- * Maximum message size is documented in protocol.md (default 64 KB).
  *
  * <pre>
  * {
@@ -39,9 +38,6 @@ public class Request {
      */
     private JsonNode payload;
 
-    // ── Constructors ──────────────────────────────────────────────────────
-
-    /** Required by Jackson. */
     public Request() { }
 
     /**
@@ -72,30 +68,20 @@ public class Request {
         this.payload = payload;
     }
 
-    // ── Getters / setters ──────────────────────────────────────────────────
-
-    /** @return unique correlation ID */
     public String getRequestId() { return requestId; }
 
-    /** @param requestId unique correlation ID */
     public void setRequestId(String requestId) { this.requestId = requestId; }
 
-    /** @return request type */
     public RequestType getType() { return type; }
 
-    /** @param type request type */
     public void setType(RequestType type) { this.type = type; }
 
-    /** @return session token */
     public String getToken() { return token; }
 
-    /** @param token session token */
     public void setToken(String token) { this.token = token; }
 
-    /** @return raw JSON payload node */
     public JsonNode getPayload() { return payload; }
 
-    /** @param payload raw JSON payload node */
     public void setPayload(JsonNode payload) { this.payload = payload; }
 
     @Override

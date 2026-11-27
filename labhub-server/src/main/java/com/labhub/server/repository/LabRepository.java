@@ -27,14 +27,9 @@ public class LabRepository {
 
     private final DatabaseManager db;
 
-    /**
-     * @param db database manager
-     */
     public LabRepository(DatabaseManager db) {
         this.db = db;
     }
-
-    // ── Queries ───────────────────────────────────────────────────────────
 
     /**
      * Finds a lab by its internal ID.
@@ -164,8 +159,6 @@ public class LabRepository {
         return result;
     }
 
-    // ── Mutations ─────────────────────────────────────────────────────────
-
     /**
      * Creates a new lab record.
      *
@@ -236,8 +229,6 @@ public class LabRepository {
             ps.executeUpdate();
         }
     }
-
-    // ── Internal ──────────────────────────────────────────────────────────
 
     private String baseSql() {
         return "SELECT l.id, l.lab_code, l.name, l.building, l.floor, l.capacity, "

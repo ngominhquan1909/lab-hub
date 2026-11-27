@@ -31,14 +31,9 @@ public class BookingRepository {
 
     private final DatabaseManager db;
 
-    /**
-     * @param db database manager
-     */
     public BookingRepository(DatabaseManager db) {
         this.db = db;
     }
-
-    // ── Conflict detection ────────────────────────────────────────────────
 
     /**
      * Checks whether a proposed time slot conflicts with any existing APPROVED booking
@@ -68,12 +63,10 @@ public class BookingRepository {
             }
         } catch (SQLException e) {
             LOG.error("Error checking booking conflict: {}", e.getMessage(), e);
-            // Fail safe — treat as conflict to prevent double-booking
+            // Fail safe - treat as conflict to prevent double-booking
             return true;
         }
     }
-
-    // ── Queries ───────────────────────────────────────────────────────────
 
     /**
      * Finds a booking by its ID.
@@ -199,8 +192,6 @@ public class BookingRepository {
         return result;
     }
 
-    // ── Mutations ─────────────────────────────────────────────────────────
-
     /**
      * Creates a new booking in PENDING status.
      *
@@ -271,8 +262,6 @@ public class BookingRepository {
             }
         }
     }
-
-    // ── Internal ──────────────────────────────────────────────────────────
 
     private void updateDecision(long bookingId, BookingStatus status,
                                 long deciderId, String note) throws SQLException {

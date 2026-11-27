@@ -42,7 +42,6 @@ public class ItemConditionDialogController {
     private BorrowRequestDto request;
     private BorrowRequestDto updatedRequest;
 
-    /** @return the updated borrow request after a successful checkout/return, or null otherwise. */
     public BorrowRequestDto getUpdatedRequest() {
         return updatedRequest;
     }
@@ -127,8 +126,6 @@ public class ItemConditionDialogController {
         updatedRequest = null;
         closeDialog();
     }
-
-    // ── Helpers ───────────────────────────────────────────────────────────
 
     private void showError(String message) {
         errorLabel.setText(message);

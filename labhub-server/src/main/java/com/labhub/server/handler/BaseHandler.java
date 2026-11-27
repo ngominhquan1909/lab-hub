@@ -20,12 +20,10 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class BaseHandler implements RequestHandler {
 
-    /** Shared Jackson mapper — thread-safe. */
+    /** Shared Jackson mapper - thread-safe. */
     protected static final ObjectMapper MAPPER = JsonMapper.get();
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseHandler.class);
-
-    // ── Authorization ─────────────────────────────────────────────────────
 
     /**
      * Returns a FORBIDDEN response if {@code user} does not have at least one of {@code roles}.
@@ -54,8 +52,6 @@ public abstract class BaseHandler implements RequestHandler {
         }
         return null;
     }
-
-    // ── Payload parsing ───────────────────────────────────────────────────
 
     /**
      * Deserializes the request payload into the given type.

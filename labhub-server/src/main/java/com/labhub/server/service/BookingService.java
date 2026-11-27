@@ -43,12 +43,6 @@ public class BookingService {
     private final DashboardRepository dashboardRepository;
     private final ServerConfig config;
 
-    /**
-     * @param bookingRepository booking data access
-     * @param labRepository     lab data access (for capacity check)
-     * @param dashboardRepository audit logging
-     * @param config            server configuration (booking policy settings)
-     */
     public BookingService(BookingRepository bookingRepository,
                           LabRepository labRepository,
                           DashboardRepository dashboardRepository,
@@ -58,8 +52,6 @@ public class BookingService {
         this.dashboardRepository = dashboardRepository;
         this.config = config;
     }
-
-    // ── Queries ───────────────────────────────────────────────────────────
 
     /**
      * Returns paginated bookings. Regular users see only their own; managers see all.
@@ -103,8 +95,6 @@ public class BookingService {
         return booking;
     }
 
-    // ── Mutations ─────────────────────────────────────────────────────────
-
     /**
      * Creates a new booking request after validating all business rules.
      *
@@ -113,7 +103,7 @@ public class BookingService {
      * @return service result
      */
     public ServiceResult<BookingDto> create(BookingDto dto, UserDto currentUser) {
-        // ── Validate basic fields ──────────────────────────────────────────
+        // Validate basic fields
         if (dto.getLabId() == null) {
             return ServiceResult.failure("A lab must be selected.");
         }
@@ -146,7 +136,7 @@ public class BookingService {
                     + " days in advance.");
         }
 
-        // ── Lab validation ─────────────────────────────────────────────────
+        // Lab validation
         Optional<LabDto> maybelab = labRepository.findById(dto.getLabId());
         if (maybelab.isEmpty()) {
             return ServiceResult.failure("Selected lab does not exist.");
@@ -161,14 +151,14 @@ public class BookingService {
                     + ") exceeds lab capacity (" + lab.getCapacity() + ").");
         }
 
-        // ── Conflict detection ─────────────────────────────────────────────
+        // Conflict detection
         if (bookingRepository.hasConflict(dto.getLabId(), start, end, 0)) {
             return ServiceResult.failure(
                     "This time slot conflicts with an existing approved booking for "
                     + lab.getName() + ". Please choose a different time.");
         }
 
-        // ── Persist ────────────────────────────────────────────────────────
+        // Persist
         dto.setRequesterId(currentUser.getId());
         try {
             long newId = bookingRepository.create(dto);

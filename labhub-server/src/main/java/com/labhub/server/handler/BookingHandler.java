@@ -22,10 +22,6 @@ public class BookingHandler extends BaseHandler {
     private final BookingService bookingService;
     private final BookingRepository bookingRepository;
 
-    /**
-     * @param bookingService    booking business logic
-     * @param bookingRepository direct access for schedule queries
-     */
     public BookingHandler(BookingService bookingService, BookingRepository bookingRepository) {
         this.bookingService = bookingService;
         this.bookingRepository = bookingRepository;
@@ -45,8 +41,6 @@ public class BookingHandler extends BaseHandler {
                     "BookingHandler does not handle " + request.getType());
         };
     }
-
-    // ── Handlers ──────────────────────────────────────────────────────────
 
     private Response handleList(Request request, UserDto currentUser) {
         JsonNode payload = request.getPayload();

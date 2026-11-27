@@ -21,8 +21,6 @@ public final class ServiceResult<T> {
         this.errorMessage = errorMessage;
     }
 
-    // ── Factories ─────────────────────────────────────────────────────────
-
     /**
      * Creates a successful result with data.
      *
@@ -44,8 +42,6 @@ public final class ServiceResult<T> {
     public static <T> ServiceResult<T> failure(String message) {
         return new ServiceResult<>(false, null, message);
     }
-
-    // ── Accessors ─────────────────────────────────────────────────────────
 
     /**
      * Returns true if the operation succeeded.

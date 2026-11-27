@@ -15,7 +15,7 @@
             <Label text="Loading dashboard…" style="-fx-text-fill:#657078;"/>
         </HBox>
 
-        <!-- ── Row 1: Key figures ── -->
+        <!-- Row 1: Key figures -->
         <VBox spacing="12">
             <HBox alignment="CENTER_LEFT" spacing="8">
                 <Label text="Operations Summary" styleClass="section-title"/>
@@ -67,7 +67,7 @@
             </GridPane>
         </VBox>
 
-        <!-- ── Row 2: Pending action counts ── -->
+        <!-- Row 2: Pending action counts -->
         <HBox spacing="12">
             <!-- Pending Bookings -->
             <VBox styleClass="stat-card stat-card-accent" spacing="6" HBox.hgrow="ALWAYS">
@@ -118,7 +118,7 @@
             </VBox>
         </HBox>
 
-        <!-- ── Row 3: Today's bookings ── -->
+        <!-- Row 3: Today's bookings -->
         <VBox spacing="12">
             <HBox alignment="CENTER_LEFT">
                 <Label text="Today's Lab Schedule" styleClass="section-title"/>

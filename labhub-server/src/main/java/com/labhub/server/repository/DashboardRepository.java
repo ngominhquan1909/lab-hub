@@ -20,7 +20,7 @@ import java.util.List;
  * Data access layer for dashboard statistics and audit log queries.
  *
  * <p>All stat queries run in a single connection to avoid multiple pool checkouts.
- * Values are always read from the database — none are hard-coded.
+ * Values are always read from the database - none are hard-coded.
  */
 public class DashboardRepository {
 
@@ -28,14 +28,9 @@ public class DashboardRepository {
 
     private final DatabaseManager db;
 
-    /**
-     * @param db database manager
-     */
     public DashboardRepository(DatabaseManager db) {
         this.db = db;
     }
-
-    // ── Dashboard stats ───────────────────────────────────────────────────
 
     /**
      * Builds and returns current operational statistics.
@@ -85,8 +80,6 @@ public class DashboardRepository {
         }
         return stats;
     }
-
-    // ── Audit log ─────────────────────────────────────────────────────────
 
     /**
      * Returns paginated audit log entries, newest first.
@@ -152,7 +145,7 @@ public class DashboardRepository {
     }
 
     /**
-     * Records an audit log entry. Never fails silently — warnings are logged.
+     * Records an audit log entry. Never fails silently - warnings are logged.
      *
      * @param actorId    ID of the user performing the action (null for system)
      * @param action     action identifier, e.g. "BOOKING_APPROVED"
@@ -184,8 +177,6 @@ public class DashboardRepository {
             LOG.warn("Failed to write audit log entry [{}]: {}", action, e.getMessage());
         }
     }
-
-    // ── Internal ──────────────────────────────────────────────────────────
 
     private int querySingleInt(Connection conn, String sql) throws SQLException {
         try (PreparedStatement ps = conn.prepareStatement(sql);

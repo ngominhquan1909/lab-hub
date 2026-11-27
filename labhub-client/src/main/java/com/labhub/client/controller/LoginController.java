@@ -43,8 +43,6 @@ public class LoginController implements Initializable {
         Platform.runLater(() -> usernameField.requestFocus());
     }
 
-    // ── Event handlers ────────────────────────────────────────────────────
-
     /**
      * Triggered by the Sign In button or Enter key in either field.
      */
@@ -75,7 +73,7 @@ public class LoginController implements Initializable {
                 });
 
             } catch (ApiException e) {
-                LOG.warn("Login failed: {} — {}", e.getCode(), e.getMessage());
+                LOG.warn("Login failed: {} - {}", e.getCode(), e.getMessage());
                 Platform.runLater(() -> {
                     setLoading(false);
                     if (e.isNetworkError()) {
@@ -89,8 +87,6 @@ public class LoginController implements Initializable {
             }
         });
     }
-
-    // ── Helpers ───────────────────────────────────────────────────────────
 
     private void setLoading(boolean loading) {
         loginButton.setDisable(loading);

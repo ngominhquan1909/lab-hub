@@ -73,8 +73,6 @@ public class EquipmentController implements Initializable {
         loadPage(1);
     }
 
-    // ── Event handlers ────────────────────────────────────────────────────
-
     @FXML
     private void onSearch() {
         currentPage = 1;
@@ -114,8 +112,6 @@ public class EquipmentController implements Initializable {
             loadPage(currentPage + 1);
         }
     }
-
-    // ── Data loading ──────────────────────────────────────────────────────
 
     private void loadPage(int page) {
         setLoading(true);
@@ -159,8 +155,6 @@ public class EquipmentController implements Initializable {
         prevPageBtn.setDisable(page <= 1);
         nextPageBtn.setDisable(page >= totalPages);
     }
-
-    // ── Table setup ───────────────────────────────────────────────────────
 
     private void setupTable() {
         colAssetCode.setCellValueFactory(c ->

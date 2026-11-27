@@ -42,7 +42,6 @@ public class CreateUserDialogController {
 
     private UserDto createdUser;
 
-    /** @return the created user account, or null if cancelled or save failed. */
     public UserDto getCreatedUser() {
         return createdUser;
     }
@@ -100,8 +99,6 @@ public class CreateUserDialogController {
         createdUser = null;
         closeDialog();
     }
-
-    // ── Helpers ───────────────────────────────────────────────────────────
 
     private String textOf(TextField field) {
         return field.getText() == null ? "" : field.getText().trim();

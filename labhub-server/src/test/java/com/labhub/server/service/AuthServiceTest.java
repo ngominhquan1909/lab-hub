@@ -18,11 +18,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link AuthService}.
- * Uses hand-written fakes — no Mockito dependency required.
+ * Uses hand-written fakes - no Mockito dependency required.
  */
 class AuthServiceTest {
 
-    // ── Fakes ──────────────────────────────────────────────────────────────
+    // Fakes
 
     private static class FakeUserRepository extends UserRepository {
         private final User storedUser;
@@ -51,7 +51,7 @@ class AuthServiceTest {
         public void updatePassword(long id, String newHashedPwd) throws SQLException { /* no-op */ }
     }
 
-    // ── Setup ──────────────────────────────────────────────────────────────
+    // Setup
 
     private static final String PLAIN_PASSWORD = "correct-password-123";
     private User testUser;
@@ -73,10 +73,10 @@ class AuthServiceTest {
         authService = new AuthService(new FakeUserRepository(testUser), sessionManager);
     }
 
-    // ── Login tests ────────────────────────────────────────────────────────
+    // Login tests
 
     @Test
-    @DisplayName("Valid credentials → successful login with token")
+    @DisplayName("Valid credentials -> successful login with token")
     void login_validCredentials_returnsToken() {
         AuthService.LoginResult result = authService.login("testuser", PLAIN_PASSWORD);
         assertTrue(result.isSuccess());
@@ -86,16 +86,16 @@ class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("Wrong password → login fails with generic message")
+    @DisplayName("Wrong password -> login fails with generic message")
     void login_wrongPassword_fails() {
         AuthService.LoginResult result = authService.login("testuser", "wrong-password");
         assertFalse(result.isSuccess());
-        // Generic message — no distinction between wrong user/wrong password
+        // Generic message - no distinction between wrong user/wrong password
         assertEquals("Invalid username or password.", result.getErrorMessage());
     }
 
     @Test
-    @DisplayName("Unknown username → login fails")
+    @DisplayName("Unknown username -> login fails")
     void login_unknownUsername_fails() {
         AuthService.LoginResult result = authService.login("nobody", PLAIN_PASSWORD);
         assertFalse(result.isSuccess());
@@ -103,7 +103,7 @@ class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("Blank username → validation error")
+    @DisplayName("Blank username -> validation error")
     void login_blankUsername_fails() {
         AuthService.LoginResult result = authService.login("  ", PLAIN_PASSWORD);
         assertFalse(result.isSuccess());
@@ -111,7 +111,7 @@ class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("Blank password → validation error")
+    @DisplayName("Blank password -> validation error")
     void login_blankPassword_fails() {
         AuthService.LoginResult result = authService.login("testuser", "");
         assertFalse(result.isSuccess());
@@ -119,7 +119,7 @@ class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("Disabled account → access denied even with correct password")
+    @DisplayName("Disabled account -> access denied even with correct password")
     void login_disabledAccount_denied() {
         testUser.setActive(false);
         AuthService.LoginResult result = authService.login("testuser", PLAIN_PASSWORD);
@@ -127,7 +127,7 @@ class AuthServiceTest {
         assertTrue(result.getErrorMessage().contains("disabled"));
     }
 
-    // ── Logout tests ───────────────────────────────────────────────────────
+    // Logout tests
 
     @Test
     @DisplayName("Logout invalidates the session token")
@@ -146,10 +146,10 @@ class AuthServiceTest {
         assertDoesNotThrow(() -> authService.logout("non-existent-token"));
     }
 
-    // ── Change password tests ──────────────────────────────────────────────
+    // Change password tests
 
     @Test
-    @DisplayName("Change password with correct current password → success")
+    @DisplayName("Change password with correct current password -> success")
     void changePassword_correctCurrent_succeeds() {
         AuthService.ChangePasswordResult result = authService.changePassword(
                 1L, PLAIN_PASSWORD, "new-secure-password-456");
@@ -157,7 +157,7 @@ class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("Change password with wrong current → fails")
+    @DisplayName("Change password with wrong current -> fails")
     void changePassword_wrongCurrent_fails() {
         AuthService.ChangePasswordResult result = authService.changePassword(
                 1L, "wrong-current", "new-password-456");
@@ -166,7 +166,7 @@ class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("New password too short → validation error")
+    @DisplayName("New password too short -> validation error")
     void changePassword_tooShort_fails() {
         AuthService.ChangePasswordResult result = authService.changePassword(
                 1L, PLAIN_PASSWORD, "short");
@@ -174,7 +174,7 @@ class AuthServiceTest {
         assertTrue(result.getErrorMessage().contains("8 characters"));
     }
 
-    // ── Session token tests ────────────────────────────────────────────────
+    // Session token tests
 
     @Test
     @DisplayName("Session token is unique across concurrent logins")
