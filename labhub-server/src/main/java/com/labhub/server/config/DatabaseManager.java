@@ -15,7 +15,7 @@ import java.sql.SQLException;
  * are always returned to the pool:
  *
  * <pre>{@code
- * try (Connection conn = DatabaseManager.getInstance().getConnection()) {
+ * try (Connection conn = databaseManager.getConnection()) {
  *     // ... JDBC operations ...
  * }
  * }</pre>
@@ -27,8 +27,6 @@ public final class DatabaseManager implements AutoCloseable {
     private static final Logger LOG = LoggerFactory.getLogger(DatabaseManager.class);
 
     private final HikariDataSource dataSource;
-
-    // ── Constructor ───────────────────────────────────────────────────────
 
     /**
      * Initializes the connection pool from the given configuration.
@@ -50,6 +48,7 @@ public final class DatabaseManager implements AutoCloseable {
 
         // Validate the connection on acquisition and discard broken connections
         hikariConfig.setConnectionTestQuery("SELECT 1");
+        hikariConfig.setConnectionInitSql("SET time_zone = '+00:00'");
         hikariConfig.setValidationTimeout(5_000L);
 
         // MySQL-specific settings
@@ -58,7 +57,7 @@ public final class DatabaseManager implements AutoCloseable {
         hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit",    "2048");
         hikariConfig.addDataSourceProperty("useServerPrepStmts",       "true");
 
-        LOG.info("Initializing database connection pool…");
+        LOG.info("Initializing database connection pool...");
         try {
             this.dataSource = new HikariDataSource(hikariConfig);
             // Verify at least one connection can be established
@@ -72,8 +71,6 @@ public final class DatabaseManager implements AutoCloseable {
         }
     }
 
-    // ── Usage ─────────────────────────────────────────────────────────────
-
     /**
      * Returns a connection from the pool.
      * Always use in a try-with-resources block.
@@ -84,8 +81,6 @@ public final class DatabaseManager implements AutoCloseable {
     public Connection getConnection() throws SQLException {
         return dataSource.getConnection();
     }
-
-    // ── Shutdown ──────────────────────────────────────────────────────────
 
     /**
      * Closes the connection pool and releases all resources.
@@ -99,7 +94,6 @@ public final class DatabaseManager implements AutoCloseable {
         }
     }
 
-    /** @return true if the pool is healthy and open */
     public boolean isHealthy() {
         return dataSource != null && !dataSource.isClosed();
     }

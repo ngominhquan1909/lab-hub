@@ -1,5 +1,5 @@
 -- ============================================================
--- LabHub — Database Schema
+-- LabHub - Database Schema
 -- MySQL 8.0+
 -- Timezone strategy: all timestamps stored as UTC (DATETIME columns).
 -- ID strategy: BIGINT AUTO_INCREMENT (simple, stable, non-guessable
@@ -14,7 +14,7 @@ CREATE DATABASE IF NOT EXISTS labhub
 
 USE labhub;
 
--- ── Users ─────────────────────────────────────────────────────────────────
+-- Users
 
 CREATE TABLE users (
     id            BIGINT       NOT NULL AUTO_INCREMENT,
@@ -25,7 +25,7 @@ CREATE TABLE users (
     password_hash VARCHAR(255) NOT NULL,  -- BCrypt hash; plaintext is NEVER stored
     is_active     TINYINT(1)   NOT NULL DEFAULT 1,
     created_at    DATETIME     NOT NULL DEFAULT (UTC_TIMESTAMP()),
-    updated_at    DATETIME     NOT NULL DEFAULT (UTC_TIMESTAMP()) ON UPDATE (UTC_TIMESTAMP()),
+    updated_at    DATETIME     NOT NULL DEFAULT (UTC_TIMESTAMP()) ON UPDATE CURRENT_TIMESTAMP,
     last_login_at DATETIME,
 
     PRIMARY KEY (id),
@@ -34,7 +34,7 @@ CREATE TABLE users (
     INDEX idx_users_active (is_active)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ── Roles ─────────────────────────────────────────────────────────────────
+-- Roles
 -- Role values must match com.labhub.common.enums.UserRole exactly.
 
 CREATE TABLE roles (
@@ -54,7 +54,7 @@ CREATE TABLE user_roles (
     CONSTRAINT fk_user_roles_role FOREIGN KEY (role_id) REFERENCES roles(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ── Laboratories ───────────────────────────────────────────────────────────
+-- Laboratories
 
 CREATE TABLE labs (
     id          BIGINT       NOT NULL AUTO_INCREMENT,
@@ -68,7 +68,7 @@ CREATE TABLE labs (
     status      VARCHAR(30)  NOT NULL DEFAULT 'ACTIVE',
     -- status CHECK: ACTIVE | INACTIVE | DECOMMISSIONED
     created_at  DATETIME     NOT NULL DEFAULT (UTC_TIMESTAMP()),
-    updated_at  DATETIME     NOT NULL DEFAULT (UTC_TIMESTAMP()) ON UPDATE (UTC_TIMESTAMP()),
+    updated_at  DATETIME     NOT NULL DEFAULT (UTC_TIMESTAMP()) ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (id),
     UNIQUE KEY uq_labs_code (lab_code),
@@ -77,7 +77,7 @@ CREATE TABLE labs (
     CONSTRAINT chk_labs_status   CHECK (status IN ('ACTIVE','INACTIVE','DECOMMISSIONED'))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ── Equipment categories ───────────────────────────────────────────────────
+-- Equipment categories
 
 CREATE TABLE equipment_categories (
     id          BIGINT       NOT NULL AUTO_INCREMENT,
@@ -88,7 +88,7 @@ CREATE TABLE equipment_categories (
     UNIQUE KEY uq_category_name (name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ── Equipment ──────────────────────────────────────────────────────────────
+-- Equipment
 
 CREATE TABLE equipment (
     id               BIGINT         NOT NULL AUTO_INCREMENT,
@@ -106,7 +106,7 @@ CREATE TABLE equipment (
     notes            TEXT,
     is_active        TINYINT(1)     NOT NULL DEFAULT 1,
     created_at       DATETIME       NOT NULL DEFAULT (UTC_TIMESTAMP()),
-    updated_at       DATETIME       NOT NULL DEFAULT (UTC_TIMESTAMP()) ON UPDATE (UTC_TIMESTAMP()),
+    updated_at       DATETIME       NOT NULL DEFAULT (UTC_TIMESTAMP()) ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (id),
     UNIQUE KEY uq_equipment_asset_code   (asset_code),
@@ -121,7 +121,7 @@ CREATE TABLE equipment (
     CONSTRAINT chk_equipment_status   CHECK (status IN ('AVAILABLE','IN_USE','BORROWED','MAINTENANCE','LOST','RETIRED'))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ── Bookings ───────────────────────────────────────────────────────────────
+-- Bookings
 
 CREATE TABLE bookings (
     id             BIGINT      NOT NULL AUTO_INCREMENT,
@@ -137,7 +137,7 @@ CREATE TABLE bookings (
     decided_at     DATETIME,
     decision_note  TEXT,
     created_at     DATETIME    NOT NULL DEFAULT (UTC_TIMESTAMP()),
-    updated_at     DATETIME    NOT NULL DEFAULT (UTC_TIMESTAMP()) ON UPDATE (UTC_TIMESTAMP()),
+    updated_at     DATETIME    NOT NULL DEFAULT (UTC_TIMESTAMP()) ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (id),
     INDEX idx_bookings_lab       (lab_id),
@@ -152,7 +152,7 @@ CREATE TABLE bookings (
     CONSTRAINT chk_bookings_capacity CHECK (attendee_count > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ── Borrow requests ────────────────────────────────────────────────────────
+-- Borrow requests
 
 CREATE TABLE borrow_requests (
     id                 BIGINT       NOT NULL AUTO_INCREMENT,
@@ -165,7 +165,7 @@ CREATE TABLE borrow_requests (
     status             VARCHAR(20)  NOT NULL DEFAULT 'PENDING',
     decision_note      TEXT,
     created_at         DATETIME     NOT NULL DEFAULT (UTC_TIMESTAMP()),
-    updated_at         DATETIME     NOT NULL DEFAULT (UTC_TIMESTAMP()) ON UPDATE (UTC_TIMESTAMP()),
+    updated_at         DATETIME     NOT NULL DEFAULT (UTC_TIMESTAMP()) ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (id),
     INDEX idx_borrow_requester (requester_id),
@@ -191,7 +191,7 @@ CREATE TABLE borrow_items (
     CONSTRAINT fk_borrow_items_equipment FOREIGN KEY (equipment_id)      REFERENCES equipment(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ── Maintenance tickets ────────────────────────────────────────────────────
+-- Maintenance tickets
 
 CREATE TABLE maintenance_tickets (
     id               BIGINT      NOT NULL AUTO_INCREMENT,
@@ -202,7 +202,7 @@ CREATE TABLE maintenance_tickets (
     assignee_id      BIGINT,
     status           VARCHAR(20) NOT NULL DEFAULT 'OPEN',
     opened_at        DATETIME    NOT NULL DEFAULT (UTC_TIMESTAMP()),
-    updated_at       DATETIME    NOT NULL DEFAULT (UTC_TIMESTAMP()) ON UPDATE (UTC_TIMESTAMP()),
+    updated_at       DATETIME    NOT NULL DEFAULT (UTC_TIMESTAMP()) ON UPDATE CURRENT_TIMESTAMP,
     resolved_at      DATETIME,
     resolution_notes TEXT,
     repair_cost      DECIMAL(10, 2),
@@ -218,7 +218,7 @@ CREATE TABLE maintenance_tickets (
     CONSTRAINT chk_maintenance_status   CHECK (status IN ('OPEN','ASSIGNED','IN_PROGRESS','RESOLVED','CLOSED'))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ── Audit log ──────────────────────────────────────────────────────────────
+-- Audit log
 -- Never stores passwords, tokens, or sensitive secrets.
 
 CREATE TABLE audit_logs (
