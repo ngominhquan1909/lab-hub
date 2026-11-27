@@ -20,14 +20,12 @@ import java.util.Properties;
  *   <li>server.properties on the classpath (useful for tests).</li>
  * </ol>
  *
- * <p>Fails fast with a clear message if any required property is absent.
- * Database password and other secrets are never logged.
+ * <p>Database password and other secrets are not logged.
  */
-public final class ServerConfig {
+public class ServerConfig {
 
     private static final Logger LOG = LoggerFactory.getLogger(ServerConfig.class);
 
-    // ── Defaults ──────────────────────────────────────────────────────────
     private static final String DEFAULT_HOST        = "localhost";
     private static final int    DEFAULT_PORT        = 9090;
     private static final int    DEFAULT_MAX_THREADS = 20;
@@ -40,7 +38,6 @@ public final class ServerConfig {
     private static final int    DEFAULT_MAX_ADVANCE_DAYS = 90;
     private static final int    DEFAULT_MIN_DURATION_MIN = 30;
 
-    // ── Fields ────────────────────────────────────────────────────────────
     private final String serverHost;
     private final int    serverPort;
     private final int    maxThreads;
@@ -59,8 +56,6 @@ public final class ServerConfig {
     private final int sessionTimeoutMinutes;
     private final int bookingMaxAdvanceDays;
     private final int bookingMinDurationMinutes;
-
-    // ── Loading ───────────────────────────────────────────────────────────
 
     /**
      * Loads configuration from the first available source.
@@ -100,7 +95,7 @@ public final class ServerConfig {
             LOG.warn("Failed to load classpath server.properties: {}", e.getMessage());
         }
 
-        LOG.warn("No server.properties found — using built-in defaults. "
+        LOG.warn("No server.properties found - using built-in defaults. "
                 + "Copy server.properties.example to server.properties and configure it.");
         return new ServerConfig(props);
     }
@@ -113,9 +108,7 @@ public final class ServerConfig {
         }
     }
 
-    // ── Constructor ───────────────────────────────────────────────────────
-
-    private ServerConfig(Properties p) {
+    protected ServerConfig(Properties p) {
         serverHost   = p.getProperty("server.host", DEFAULT_HOST);
         serverPort   = intProp(p, "server.port", DEFAULT_PORT);
         maxThreads   = intProp(p, "server.max.threads", DEFAULT_MAX_THREADS);
@@ -136,12 +129,10 @@ public final class ServerConfig {
         bookingMaxAdvanceDays    = intProp(p, "booking.max.advance.days",    DEFAULT_MAX_ADVANCE_DAYS);
         bookingMinDurationMinutes = intProp(p, "booking.min.duration.minutes", DEFAULT_MIN_DURATION_MIN);
 
-        // Log summary — never log the password
+        // Log summary - never log the password
         LOG.info("Server config: host={}, port={}, threads={}", serverHost, serverPort, maxThreads);
         LOG.info("Database config: jdbc:mysql://{}:{}/{} (pool max={})", dbHost, dbPort, dbName, poolMaxSize);
     }
-
-    // ── Helpers ───────────────────────────────────────────────────────────
 
     private static String required(Properties p, String key, String defaultValue) {
         String v = p.getProperty(key);
@@ -178,18 +169,12 @@ public final class ServerConfig {
         }
     }
 
-    // ── Accessors ─────────────────────────────────────────────────────────
-
-    /** @return server listen host */
     public String getServerHost() { return serverHost; }
 
-    /** @return server listen port */
     public int getServerPort() { return serverPort; }
 
-    /** @return maximum concurrent client threads */
     public int getMaxThreads() { return maxThreads; }
 
-    /** @return JDBC URL built from configured host/port/database */
     public String getJdbcUrl() {
         return "jdbc:mysql://" + dbHost + ":" + dbPort + "/" + dbName
                 + "?useUnicode=true&characterEncoding=UTF-8"
@@ -197,33 +182,23 @@ public final class ServerConfig {
                 + "&useSSL=false&allowPublicKeyRetrieval=true";
     }
 
-    /** @return database username */
     public String getDbUsername() { return dbUsername; }
 
-    /** @return database password (handle with care; do not log) */
     public String getDbPassword() { return dbPassword; }
 
-    /** @return HikariCP max pool size */
     public int getPoolMaxSize() { return poolMaxSize; }
 
-    /** @return HikariCP minimum idle connections */
     public int getPoolMinIdle() { return poolMinIdle; }
 
-    /** @return HikariCP connection timeout in milliseconds */
     public long getConnectionTimeoutMs() { return connectionTimeoutMs; }
 
-    /** @return HikariCP idle timeout in milliseconds */
     public long getIdleTimeoutMs() { return idleTimeoutMs; }
 
-    /** @return HikariCP max connection lifetime in milliseconds */
     public long getMaxLifetimeMs() { return maxLifetimeMs; }
 
-    /** @return session timeout in minutes */
     public int getSessionTimeoutMinutes() { return sessionTimeoutMinutes; }
 
-    /** @return maximum days in advance a booking may be made */
     public int getBookingMaxAdvanceDays() { return bookingMaxAdvanceDays; }
 
-    /** @return minimum booking duration in minutes */
     public int getBookingMinDurationMinutes() { return bookingMinDurationMinutes; }
 }
