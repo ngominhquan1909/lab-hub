@@ -1,16 +1,16 @@
-# LabHub — Architecture Documentation
+# LabHub - Architecture Documentation
 
 ## System Overview
 
-LabHub is a **three-tier desktop client–server application**:
+LabHub is a **three-tier desktop client-server application**:
 
 ```
-Client Tier       │   Network Tier        │   Data Tier
-──────────────────┼───────────────────────┼──────────────────
-JavaFX UI         │   TCP Socket          │   MySQL 8
-Controllers       │   JSON Protocol       │   HikariCP Pool
-ApiClient         │   Port 9090 (default) │   Repositories
-AppContext        │                       │   Domain Models
+Client Tier       |   Network Tier        |   Data Tier
+------------------+-----------------------+------------------
+JavaFX UI         |   TCP Socket          |   MySQL 8
+Controllers       |   JSON Protocol       |   HikariCP Pool
+ApiClient         |   Port 9090 (default) |   Repositories
+AppContext        |                       |   Domain Models
 ```
 
 ---
@@ -20,27 +20,27 @@ AppContext        │                       │   Domain Models
 ### `labhub-common`
 Shared code that both client and server depend on. Contains no business logic.
 
-- **DTOs** — Data Transfer Objects for all entities (User, Lab, Equipment, Booking, etc.)
-- **Enums** — `UserRole`, `EquipmentStatus`, `BookingStatus`, `BorrowStatus`, `MaintenanceStatus`, etc.
-- **Protocol** — `Request`, `Response` envelopes; `RequestType` enum; `JsonMapper` singleton
-- **Validation** — `ValidationResult` with field and global errors
+- **DTOs** - Data Transfer Objects for all entities (User, Lab, Equipment, Booking, etc.)
+- **Enums** - `UserRole`, `EquipmentStatus`, `BookingStatus`, `BorrowStatus`, `MaintenanceStatus`, etc.
+- **Protocol** - `Request`, `Response` envelopes; `RequestType` enum; `JsonMapper` singleton
+- **Validation** - `ValidationResult` with field and global errors
 
 ### `labhub-server`
 Java application running as a persistent background service.
 
 ```
 LabHubServerApplication
-└── SocketServer (accept loop, thread pool)
-    └── ClientHandler (one per connection, virtual thread)
-        └── RequestDispatcher (authentication + routing)
-            ├── AuthHandler       → AuthService
-            ├── BookingHandler    → BookingService → BookingRepository
-            ├── BorrowHandler     → BorrowService  → BorrowRepository
-            ├── EquipmentHandler  →                  EquipmentRepository
-            ├── LabHandler        →                  LabRepository
-            ├── MaintenanceHandler→                  MaintenanceRepository
-            ├── UserHandler       →                  UserRepository
-            └── DashboardHandler  →                  DashboardRepository
++-- SocketServer (accept loop, fixed thread pool)
+    +-- ClientHandler (one task per connection)
+        +-- RequestDispatcher (authentication + routing)
+            +-- AuthHandler         -> AuthService
+            +-- BookingHandler      -> BookingService -> BookingRepository
+            +-- BorrowHandler       -> BorrowService  -> BorrowRepository
+            +-- EquipmentHandler    -> EquipmentRepository
+            +-- LabHandler          -> LabRepository
+            +-- MaintenanceHandler  -> MaintenanceRepository
+            +-- UserHandler         -> UserRepository
+            +-- DashboardHandler    -> DashboardRepository
 ```
 
 **Layer responsibilities:**
@@ -60,11 +60,11 @@ JavaFX desktop application.
 
 ```
 LabHubClientApplication (JavaFX Application)
-├── AppContext      — singleton: current user, ApiClient, ServerConnection
-├── ViewManager     — FXML loading, scene switching, dialog management
-├── ServerConnection— raw TCP socket, newline-delimited JSON framing
-├── ApiClient       — high-level typed methods; wraps ServerConnection
-└── Controllers     — FXML-bound UI logic; call ApiClient on virtual threads
++-- AppContext        - singleton: current user, ApiClient, ServerConnection
++-- ViewManager       - FXML loading, scene switching, dialog management
++-- ServerConnection  - raw TCP socket, newline-delimited JSON framing
++-- ApiClient         - high-level typed methods; wraps ServerConnection
++-- Controllers       - FXML-bound UI logic; call ApiClient on virtual threads
 ```
 
 ---
@@ -73,7 +73,7 @@ LabHubClientApplication (JavaFX Application)
 
 **Transport:** TCP socket, persistent connection per client session.
 
-**Framing:** Newline-delimited JSON — one complete JSON object per line, terminated by `\n`, UTF-8 encoded.
+**Framing:** Newline-delimited JSON - one complete JSON object per line, terminated by `\n`, UTF-8 encoded.
 
 **Request envelope:**
 ```json
@@ -106,7 +106,7 @@ LabHubClientApplication (JavaFX Application)
 2. Server validates credentials using BCrypt, creates a session token (UUID v4).
 3. All subsequent requests include the token in the `token` field.
 4. `RequestDispatcher` validates the token on every non-LOGIN request.
-5. `SessionManager` maintains an in-memory token → UserDto map with configurable TTL.
+5. `SessionManager` maintains an in-memory token -> UserDto map with configurable TTL.
 6. Authorization (role check) is performed in each handler using `RequestDispatcher.hasAnyRole()`.
 
 **Security invariants:**
@@ -130,19 +130,19 @@ LabHubClientApplication (JavaFX Application)
 | `DECIMAL` for currency | Never `FLOAT` for monetary values |
 | `VARCHAR` for enum columns | Human-readable in SQL; validated by application layer |
 | Audit log has no FK on `actor_id` | Entries must persist even if user is deleted |
-| Conflict detection in SQL | Atomically correct under concurrent requests |
+| Conflict detection in SQL | Single overlap query, checked at creation and again at approval |
 
 ### Entity relationships (abbreviated)
 
 ```
-users ──< user_roles >── roles
+users --< user_roles >-- roles
 
-labs ──< equipment ──< borrow_items >── borrow_requests ── users
-     ──< bookings ── users
+labs --< equipment --< borrow_items >-- borrow_requests -- users
+     --< bookings -- users
 
-equipment ──< maintenance_tickets ── users
+equipment --< maintenance_tickets -- users
 
-audit_logs ── users (nullable FK)
+audit_logs -- users (nullable FK)
 ```
 
 ---
@@ -164,31 +164,31 @@ WHERE lab_id = ?
   AND id != ?          -- exclude self for reschedule
 ```
 
-This runs atomically in the DB and is re-checked at approval time (not only at creation) to handle race conditions between simultaneous approval decisions.
+The check is repeated at approval time as well as at creation. The check and the following update are separate statements, not one transaction.
 
 ---
 
 ## Equipment State Machine
 
 ```
-AVAILABLE ──────────────────────────────► IN_USE
-    │                                        │
-    ├──► BORROWED (via BORROW_APPROVE)       │
-    │         │                              │
-    │         └──► AVAILABLE (BORROW_RETURN) │
-    │                                        │
-    ├──► MAINTENANCE (MAINTENANCE_CREATE) ◄──┘
-    │         │
-    │         └──► AVAILABLE (MAINTENANCE_CLOSE)
-    │         └──► RETIRED
-    │
-    └──► RETIRED / LOST
+AVAILABLE ----------------------------> IN_USE
+    |                                        |
+    +--> BORROWED (via BORROW_APPROVE)       |
+    |         |                              |
+    |         +--> AVAILABLE (BORROW_RETURN) |
+    |                                        |
+    +--> MAINTENANCE (MAINTENANCE_CREATE) <--+
+    |         |
+    |         +--> AVAILABLE (MAINTENANCE_CLOSE)
+    |         +--> RETIRED
+    |
+    +--> RETIRED / LOST
 ```
 
 ---
 
 ## Threading Model
 
-**Server:** One virtual thread per client connection (`Thread.ofVirtual()`). The thread pool is bounded by `server.max.threads`. Each thread blocks on `readLine()` and processes requests sequentially for that client. `SessionManager` and all handlers are designed to be safe for concurrent access from multiple threads.
+**Server:** One task per client connection on a fixed thread pool sized by `server.max.threads`. Each task blocks on `readLine()` and processes requests sequentially for that client. `SessionManager` and all handlers are designed to be safe for concurrent access from multiple threads.
 
 **Client:** The JavaFX Application Thread handles all UI events. Network calls are dispatched to virtual threads. Results are posted back to the UI thread via `Platform.runLater()`. `ServerConnection` uses a `ReentrantLock` to serialize concurrent requests over the single socket.

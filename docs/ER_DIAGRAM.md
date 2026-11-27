@@ -1,4 +1,4 @@
-# LabHub — Entity Relationship Diagram
+# LabHub - Entity Relationship Diagram
 
 ```mermaid
 erDiagram

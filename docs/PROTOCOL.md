@@ -1,4 +1,4 @@
-# LabHub — Client–Server Protocol
+# LabHub - Client-Server Protocol
 
 ## Transport
 
@@ -9,11 +9,11 @@
 | Connection model | Persistent (one connection per client session) |
 | Framing | Newline-delimited JSON (one JSON object per `\n`-terminated line) |
 | Encoding | UTF-8 |
-| Max message size | 64 KB (enforced by BufferedReader line length) |
+| Max message size | Not enforced by the server |
 
 ## Message format
 
-### Request (Client → Server)
+### Request (Client -> Server)
 
 ```json
 {
@@ -35,7 +35,7 @@
 | `token` | No (LOGIN only) | Session token from previous LOGIN response |
 | `payload` | No | Type-specific JSON object; null for requests with no body |
 
-### Response (Server → Client)
+### Response (Server -> Client)
 
 ```json
 {
@@ -75,15 +75,15 @@
 | `INTERNAL_ERROR` | 500 | Unexpected server error |
 | `INVALID_REQUEST` | 400 | Malformed JSON or unknown request type |
 | `NOT_IMPLEMENTED` | 501 | Handler registered but feature not yet complete |
-| `NETWORK_ERROR` | — | Client-side: transport failure |
-| `PARSE_ERROR` | — | Client-side: response deserialization failure |
+| `NETWORK_ERROR` | - | Client-side: transport failure |
+| `PARSE_ERROR` | - | Client-side: response deserialization failure |
 
 ## Request types by domain
 
 ### Authentication
 | Type | Auth required | Roles |
 |---|---|---|
-| `LOGIN` | No | — |
+| `LOGIN` | No | - |
 | `LOGOUT` | Yes | Any |
 | `CHANGE_PASSWORD` | Yes | Any (own account) |
 

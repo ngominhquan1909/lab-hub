@@ -1,6 +1,6 @@
-# LabHub — Laboratory Operations Management System
+# LabHub - Laboratory Operations Management System
 
-A client–server desktop application for managing university laboratory rooms, equipment inventory, booking reservations, and equipment loan requests.
+A client-server desktop application for managing university laboratory rooms, equipment inventory, booking reservations, and equipment loan requests.
 
 ---
 
@@ -12,7 +12,7 @@ A client–server desktop application for managing university laboratory rooms, 
 | Apache Maven | 3.8+ |
 | MySQL | 8.0+ |
 
-> **Note on Java version:** The parent POM specifies Java 25 as the target per the project specification. If Java 25 is not yet available on your machine, Java 21 LTS compiles and runs the project correctly — set `<java.version>21</java.version>` in the parent `pom.xml` and remove `--enable-preview` from the compiler args.
+> **Note on Java version:** The parent POM specifies Java 25 as the target per the project specification. If Java 25 is not yet available on your machine, Java 21 LTS compiles and runs the project correctly - set `<java.version>21</java.version>` in the parent `pom.xml` and remove `--enable-preview` from the compiler args.
 
 ---
 
@@ -117,15 +117,15 @@ java --module-path /path/to/javafx/lib --add-modules javafx.controls,javafx.fxml
 
 ```
 labhub/
-├── labhub-common/          # Shared: DTOs, enums, protocol, validation
-├── labhub-server/          # Server: socket server, services, repositories, DB
-├── labhub-client/          # Client: JavaFX UI, controllers, API client
-├── database/
-│   ├── schema.sql          # MySQL schema (run first)
-│   └── seed.sql            # Demo data (run after schema)
-├── docs/                   # Architecture and design documentation
-├── checkstyle.xml          # Code style configuration
-└── pom.xml                 # Parent Maven POM
++-- labhub-common/          # Shared: DTOs, enums, protocol, validation
++-- labhub-server/          # Server: socket server, services, repositories, DB
++-- labhub-client/          # Client: JavaFX UI, controllers, API client
++-- database/
+|   +-- schema.sql          # MySQL schema (run first)
+|   +-- seed.sql            # Demo data (run after schema)
++-- docs/                   # Architecture and design documentation
++-- checkstyle.xml          # Code style configuration
++-- pom.xml                 # Parent Maven POM
 ```
 
 ---
@@ -133,7 +133,7 @@ labhub/
 ## Running Tests
 
 ```bash
-# All tests (unit tests only — no DB required)
+# All tests (unit tests only - no DB required)
 mvn test
 
 # Server module tests only
@@ -150,16 +150,16 @@ Tests use hand-written fakes (no Mockito) so they run without a database or serv
 ## Architecture Overview
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                   JavaFX Client                      │
-│  Controllers → ApiClient → ServerConnection (TCP)    │
-└──────────────────────┬──────────────────────────────┘
-                       │  TCP Socket  (JSON / newline-delimited)
-┌──────────────────────▼──────────────────────────────┐
-│                   LabHub Server                      │
-│  SocketServer → ClientHandler → RequestDispatcher   │
-│       → Handlers → Services → Repositories → MySQL  │
-└─────────────────────────────────────────────────────┘
++------------------------------------------------------+
+|                    JavaFX Client                     |
+|  Controllers -> ApiClient -> ServerConnection (TCP)  |
++---------------------------+--------------------------+
+                            |  TCP socket (newline-delimited JSON)
++---------------------------v--------------------------+
+|                    LabHub Server                     |
+|  SocketServer -> ClientHandler -> RequestDispatcher  |
+|    -> Handlers -> Services -> Repositories -> MySQL  |
++------------------------------------------------------+
 ```
 
 See `docs/ARCHITECTURE.md` for full details.
